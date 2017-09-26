@@ -17,7 +17,7 @@ fgetc : Ler caracter por caracter ate encontrar o final do arquico 'EOF'.
 
 */
 
-// guarda o arquivo lido
+// GUARDA O ARQUIVO GLOBAL
 FILE *arquivo;
 
 /**
