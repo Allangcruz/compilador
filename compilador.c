@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "leituraArquivo.h"
+#include "arquivo.h"
 
 /*
 Alunos:
