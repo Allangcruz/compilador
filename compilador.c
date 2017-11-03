@@ -1,5 +1,8 @@
 #include <stdio.h>
+#include <locale.h>
 
+#include "palavras-reservadas.h"
+#include "estrutura.h"
 #include "arquivo.h"
 
 /*
@@ -9,15 +12,25 @@ Elson Bento dos Santos
 
 Fases do compilador
 1 - Definir estrutura
-2 - Ler Arquivo
+OK => 2 - Ler Arquivo
 3 - Definir lista de simbolos
-4 - Definir palavras reservadas (utilizar lista encadeada)
+OK => 4 - Definir palavras reservadas (utilizar vetor)
+5 - validar palavras e popular tabelas de simbolos
+6 - pesquisar algo que consiga medir tempo de execução e consumo de memoria, para no final exibir indicadores.
 
 */
 
-void main (int argc, char** argv) {
-    printf("Hello World!\n");
-    
-    lerArquivo();
+void main ()
+{
+	setlocale(LC_ALL, "PORTUGUESE");
+    printf("============ COMPILADOR ============ \n");
+
+    Lista* linhas;
+	linhas = lerArquivo();
+    imprimirPalavrasReservadas();
+    imprimeLista(linhas);
+    liberaLista(linhas);
+    system("pause");
+    // teste 1234
 }
 
