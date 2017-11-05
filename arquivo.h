@@ -1,10 +1,9 @@
-/*
+/**
 Alunos:
 Allan Gonçalves da Cruz
 Elson Bento dos Santos
 
 Responsavel por manipular a leitura de arquivos.
-
 Funcoes para ler string:
 
 (http://www.cprogressivo.net/2013/11/Como-ler-arquivos-em-C-As-funcoes-fgetc-fscanf-fgets.html)
@@ -34,9 +33,14 @@ Lista* lerArquivo() {
     if (arquivo == NULL) {
     	printf("\nErro, nao foi possivel abrir o arquivo\n");
 	} else {
-		//while ((ch=fgetc(arquivo))!= EOF) {
 		while ((fgets(ch, sizeof(ch), arquivo)) != NULL) {
 			Linha item;
+			item.isLinhaVazia = 0;
+			
+			if (strlen(ch) == 1) {
+				item.isLinhaVazia = 1;
+			}
+			
 			item.linha = nuLinhas;
 			strcpy(item.conteudo, ch);
 			insereListaFinal(linhas, item);
@@ -49,36 +53,5 @@ Lista* lerArquivo() {
 	printf("\nModulo de ler arquivo carregado ...\n");
 	
 	return linhas;
-}
-
-/**
- * Escreve conteudo no arquivo.
- */
-void escreverArquivo() {
-	printf("\nModulo de escrever arquivo carregado ...\n");
-}
-
-/**
- * Retorna o Total de linhas continas no arquivo lido.
- */
-int getTotalLinhas() {
-	int total = 0;
-	char ch;
-	
-	if (arquivo == NULL) {
-    	printf("\nErro, nao foi possivel abrir o arquivo\n");
-	} else {
-		while((ch=fgetc(arquivo))!= EOF) {
-			// '\n' indica o final  da linha
-			if (ch == '\n') {
-				total ++;
-			}
-		}			
-	}
-	printf("\nModulo de contar o total de linhas do arquivo carregado ...\n");
-	
-	printf("Existem %d linhas no arquivo\n", total);
-	
-	return total;
 }
 

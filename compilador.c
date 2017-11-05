@@ -4,6 +4,8 @@
 #include "palavras-reservadas.h"
 #include "estrutura.h"
 #include "arquivo.h"
+#include "mensagem-erros.h"
+#include "validacoes-palavras-reservadas.h"
 
 /*
 Alunos:
@@ -11,11 +13,13 @@ Allan Gonçalves da Cruz
 Elson Bento dos Santos
 
 Fases do compilador
-1 - Definir estrutura
+OK => 1 - Definir estrutura que armazena o conteudo do arquivo
 OK => 2 - Ler Arquivo
 3 - Definir lista de simbolos
 OK => 4 - Definir palavras reservadas (utilizar vetor)
 5 - validar palavras e popular tabelas de simbolos
+	5.1 - As palavras reservadas sao case sensitive
+	5.2 - Validar variaveis
 6 - pesquisar algo que consiga medir tempo de execução e consumo de memoria, para no final exibir indicadores.
 
 */
@@ -27,10 +31,11 @@ void main ()
 
     Lista* linhas;
 	linhas = lerArquivo();
-    imprimirPalavrasReservadas();
+	validarAberturaFechamentoPrograma(linhas);
     imprimeLista(linhas);
     liberaLista(linhas);
+    printf("\n\n");
     system("pause");
-    // teste 1234
+    // teste 123456789101112131415161718192021
 }
 

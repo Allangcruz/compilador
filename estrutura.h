@@ -1,6 +1,9 @@
 /**
+Alunos:
+Allan Gonçalves da Cruz
+Elson Bento dos Santos
 ====================================================================================================
-	Definir estrutura para armazenar as tabela de simbolos e erros encontrados
+	Definir estrutura para armazenar as linhas do arquivo. (nao sei se crio um struct para armazenas tabela de simbolos e erros encontrados)
 	Baseado na estrutura disponibilizado em:
     1 - https://programacaodescomplicada.wordpress.com/complementar/
     2 - https://www.youtube.com/watch?v=cIpZ8YUh0Yo
@@ -14,6 +17,7 @@
 typedef struct linha {
     char conteudo[200];
     int linha;
+    int isLinhaVazia;
 } Linha;
 
 
@@ -290,10 +294,40 @@ void imprimeLista(Lista* lista) {
     Elem* no = *lista;
 
     while (no != NULL) {
-        printf("Linha: %d\n", no->dados.linha);
-        printf("Conteudo: %s\n", no->dados.conteudo);
+        printf("Linha: %d \n", no->dados.linha);
+        printf("Conteudo: %s \n", no->dados.conteudo);
+        printf("Linha esta vazia: %d \n", no->dados.isLinhaVazia);
+        printf("Total caracter linha: %d \n", strlen(no->dados.conteudo));
         printf("------------------------------------------\n");
         no = no->prox;
     }
+}
+
+/**
+ * Retorna a primeira e a ultima linha do arquivo.
+ *
+ * @param Lista* lista
+ */
+Linha getPrimeiraLinha(Lista* lista) {
+	if (lista == NULL) {
+        return;
+    }
+    
+    Linha inicio;  
+    strcpy(inicio.conteudo, "");
+    inicio.linha = 0;
+    
+    Elem* no = *lista;
+
+    while (no != NULL) {
+        // recupera o primeiro item
+		if (no->ant == NULL) {
+        	inicio = no->dados;
+		}
+		
+        no = no->prox;
+    }
+        
+    return inicio;
 }
 

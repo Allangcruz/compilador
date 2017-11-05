@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000000000000000000000
-UnitCount=3
+UnitCount=5
 
 [VersionInfo]
 Major=1
@@ -71,7 +71,27 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit3]
-FileName=estrutura.c
+FileName=estrutura.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit4]
+FileName=palavras-reservadas.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit5]
+FileName=validacoes-palavras-reservadas.h
 CompileCpp=0
 Folder=
 Compile=1
