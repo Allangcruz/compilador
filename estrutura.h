@@ -17,7 +17,6 @@ Elson Bento dos Santos
 typedef struct linha {
     char conteudo[200];
     int linha;
-    int isLinhaVazia;
 } Linha;
 
 
@@ -296,7 +295,6 @@ void imprimeLista(Lista* lista) {
     while (no != NULL) {
         printf("Linha: %d \n", no->dados.linha);
         printf("Conteudo: %s \n", no->dados.conteudo);
-        printf("Linha esta vazia: %d \n", no->dados.isLinhaVazia);
         printf("Total caracter linha: %d \n", strlen(no->dados.conteudo));
         printf("------------------------------------------\n");
         no = no->prox;

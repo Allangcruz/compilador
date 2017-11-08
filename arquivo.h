@@ -14,6 +14,8 @@ gets.
 fgetc : Ler caracter por caracter ate encontrar o final do arquico 'EOF'.
 fgets : Ler linha por linha do arquivo
 
+TRATAR TIPOS DE QUEBRAS DE LINHAS DIFERENTES.
+
 */
 
 // GUARDA O ARQUIVO GLOBAL
@@ -34,16 +36,14 @@ Lista* lerArquivo() {
     	printf("\nErro, nao foi possivel abrir o arquivo\n");
 	} else {
 		while ((fgets(ch, sizeof(ch), arquivo)) != NULL) {
-			Linha item;
-			item.isLinhaVazia = 0;
-			
-			if (strlen(ch) == 1) {
-				item.isLinhaVazia = 1;
+				
+			if (strlen(ch) != 1) {
+				Linha item;
+				item.linha = nuLinhas;
+				strcpy(item.conteudo, ch);
+				insereListaFinal(linhas, item);
 			}
-			
-			item.linha = nuLinhas;
-			strcpy(item.conteudo, ch);
-			insereListaFinal(linhas, item);
+						
 			nuLinhas ++;
 		}			
 	}

@@ -21,6 +21,7 @@ OK => 4 - Definir palavras reservadas (utilizar vetor)
 	5.1 - As palavras reservadas sao case sensitive
 	5.2 - Validar variaveis
 6 - pesquisar algo que consiga medir tempo de execução e consumo de memoria, para no final exibir indicadores.
+7 - Validar 
 
 */
 
@@ -36,6 +37,6 @@ void main ()
     liberaLista(linhas);
     printf("\n\n");
     system("pause");
-    // teste 123456789101112131415161718192021
+    // 12 \n
 }
 
