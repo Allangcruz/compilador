@@ -1,10 +1,17 @@
 #include <stdio.h>
 #include <locale.h>
+#include <limits.h>
+
+/**
+ * Constante com o total de palavras reservadas.
+ */
+#define NU_PALAVRA_RESERVADAS 10 
 
 #include "palavras-reservadas.h"
 #include "estrutura.h"
 #include "arquivo.h"
 #include "mensagem-erros.h"
+#include "tabela-simbolo.h"
 #include "validacoes-palavras-reservadas.h"
 
 /*
@@ -28,15 +35,16 @@ OK => 4 - Definir palavras reservadas (utilizar vetor)
 void main ()
 {
 	setlocale(LC_ALL, "PORTUGUESE");
-    printf("============ COMPILADOR ============ \n");
+    printf("============ COMPILADOR ============ \n\n\n\n");
 
     Lista* linhas;
 	linhas = lerArquivo();
 	validarAberturaFechamentoPrograma(linhas);
-    imprimeLista(linhas);
+    // imprimeLista(linhas);
     liberaLista(linhas);
     printf("\n\n");
+    
     system("pause");
-    // 12 \n
+    //1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18
 }
 

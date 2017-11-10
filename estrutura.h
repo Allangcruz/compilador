@@ -301,31 +301,4 @@ void imprimeLista(Lista* lista) {
     }
 }
 
-/**
- * Retorna a primeira e a ultima linha do arquivo.
- *
- * @param Lista* lista
- */
-Linha getPrimeiraLinha(Lista* lista) {
-	if (lista == NULL) {
-        return;
-    }
-    
-    Linha inicio;  
-    strcpy(inicio.conteudo, "");
-    inicio.linha = 0;
-    
-    Elem* no = *lista;
-
-    while (no != NULL) {
-        // recupera o primeiro item
-		if (no->ant == NULL) {
-        	inicio = no->dados;
-		}
-		
-        no = no->prox;
-    }
-        
-    return inicio;
-}
 

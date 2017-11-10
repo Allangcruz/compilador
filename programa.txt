@@ -1,9 +1,6 @@
+programa2
 
+inteiro #numero, #teste;
+caractere #nome;
 
-
-programa
-programA
-ou 
-programa;
-
-fim
+fimaaa234

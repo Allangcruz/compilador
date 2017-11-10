@@ -49,9 +49,6 @@ Lista* lerArquivo() {
 	}
 	
 	fclose(arquivo);
-    
-	printf("\nModulo de ler arquivo carregado ...\n");
-	
 	return linhas;
 }
 
