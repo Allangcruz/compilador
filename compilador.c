@@ -24,34 +24,38 @@ Elson Bento dos Santos
 Fases do compilador
 OK => 1 - Definir estrutura que armazena o conteudo do arquivo
 OK => 2 - Ler Arquivo
-3 - Definir lista de simbolos
+OK => 3 - Definir lista de simbolos
 OK => 4 - Definir palavras reservadas (utilizar vetor)
-5 - validar palavras e popular tabelas de simbolos
-	5.1 - As palavras reservadas sao case sensitive
-	5.2 - Validar variaveis
+OK => 5 - validar palavras e popular tabelas de simbolos
+	OK => 5.1 - As palavras reservadas sao case sensitive
+	OK => 5.2 - Validar variaveis
 6 - pesquisar algo que consiga medir consumo de memoria gasta para no final exibir indicadores.
 7 - Validar 
 */
 
-
 void main ()
 {
 	setlocale(LC_ALL, "PORTUGUESE");
-    printf("============ COMPILADOR ============ \n\n");
+    printf("\n================================================================\n");
+    printf("#= COMPILADOR, COMPILADORZINHO, COMPILADORZÃO, COMPILADORZAÇO =#\n");
+    printf("================================================================\n");
+
+	printf("================================================================\n");
+    printf("ALLAN GONÇALVE DA CRUZ - ELSON BENTO DOS SANTOS\n");
+    printf("================================================================\n");
 
     Lista* linhas;
     TabelaSimbolo* tabelaSimbolos = criaListaTabelaSimbolo();
     
     linhas = lerArquivo();
-	analiseLexica(linhas);
-    //imprimeLista(linhas);
+	analiseLexica(linhas, tabelaSimbolos);
+    // imprimeLista(linhas);
     liberaLista(linhas);
 
     imprimeTabelaSimbolo(tabelaSimbolos);
 	liberaListaTabelaSimbolo(tabelaSimbolos);
-
+	
     printf("\n\n");
     system("pause");
-    // 123,4
 }
 

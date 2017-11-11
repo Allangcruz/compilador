@@ -21,7 +21,7 @@ bool checkCondicaoParada(int valorAscii) {
 /**
  * Aplica validacoes referente a analise lexica.
  */
-void analiseLexica(Lista* lista) {
+void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 	validarAberturaFechamentoPrograma(lista);
 
 	if (lista == NULL) {
@@ -29,7 +29,7 @@ void analiseLexica(Lista* lista) {
     }
     
     Elem* no = *lista;
-    int i, valorAscii, nuLinha = 1, count = 0;
+    int i, valorAscii, nuLinha, count = 0;
     char palavraAux[UCHAR_MAX], conteudoLinha[UCHAR_MAX], palavraAuxVariavel[UCHAR_MAX];
     bool isVariavel = false, isPalavraReservada = false, isCondicaoParada = false;
     
@@ -39,18 +39,18 @@ void analiseLexica(Lista* lista) {
     
     while (no != NULL) {
 		strcpy(conteudoLinha, no->dados.conteudo);
+		nuLinha = no->dados.linha;
 		
 		for (i = 0; i < strlen(conteudoLinha); i++) {
 			valorAscii = (int) conteudoLinha[i]; 
 			
-			//if ((valorAscii != 10) && (valorAscii != 32) && (valorAscii != 40) && (valorAscii != 41) && (valorAscii != 44) && (valorAscii != 59)) {
-			isCondicaoParada = checkCondicaoParada(valorAscii);
-			if (isCondicaoParada == true) {
+			// \0, espaco, (, ), virgula, ponto e virgula
+			if ((valorAscii != 10) && (valorAscii != 32) && (valorAscii != 40) && (valorAscii != 41) && (valorAscii != 44) && (valorAscii != 59)) {
 				palavraAux[count] = (char) valorAscii;
 				count++;
 			} else {
-				printf("--------------------------------------------------------------------------------------\n");
-				printf("==> (%d) - Foi encontrado uma condição de parada (%d) <==\n", nuLinha, valorAscii);
+				// printf("--------------------------------------------------------------------------------------\n");
+				// printf("==> (Linha: %d) - Foi encontrado uma condição de parada (ascii: %d) <==\n", nuLinha, valorAscii);
 				isVariavel = validarDeclaracaoVariaveis(palavraAux);
 				
 				// verifica se não e uma variavel, se ele nao variavel, verificar se é palavra reservada
@@ -58,17 +58,25 @@ void analiseLexica(Lista* lista) {
 					isPalavraReservada = validarPalavrasReservadas(palavraAux);
 					
 					if (isPalavraReservada == true) {
-						printf("[%d] - palavra reservada => (%s)\n", nuLinha, palavraAux);
+						// printf("[Linha: %d] - palavra reservada => (%s)\n", nuLinha, palavraAux);
 					}
 				} else {
 					// (aqui são apenas para variaveis) tratar aqui os comportamento de variaveis e salvar na tabela de simbolos
-					printf("[%d] - variavel => (%s)\n", nuLinha, palavraAux);
-				}
+					//printf("[Linha: %d] - variavel => (%s)\n", nuLinha, palavraAux);
 
-				// compara se é uma variavel e se é uma palavra reservada
-				printf("isVariavel => [%d] - isPalavraReservada => [%d]\n", isVariavel, isPalavraReservada);
-				if (isVariavel == false && isPalavraReservada == false) {
-					printf("(%d) - Nao e variavel e nem uma palavra reservada.\n", nuLinha);
+    				Simbolo novoSimbolo;
+    				strcpy(novoSimbolo.palavra, palavraAux);
+					insereFinalTabelaSimbolo(tabelaSimbolos, novoSimbolo);
+				}
+				
+				// por causa que quando e encontrado 2 ou mais criterio de paradas seguidos ele estava comparando com a palavra vazia, e isso nao pode acontecer
+				if (strlen(palavraAux) > 0) {
+					// compara se é uma variavel e se é uma palavra reservada
+					// printf("isVariavel => [%d] - isPalavraReservada => [%d] (i: %d, coluna: %d) \n", isVariavel, isPalavraReservada, i, strlen(palavraAux));
+					if (isVariavel == false && isPalavraReservada == false) {
+						//printf("(linha: %d) - Nao e variavel e nem uma palavra reservada (%s).\n", nuLinha, palavraAux);
+						error(nuLinha, 5, palavraAux);
+					}
 				}
 				
 				limparLixoVetor(palavraAux);
@@ -79,7 +87,6 @@ void analiseLexica(Lista* lista) {
 		}
 		
 		no = no->prox;
-		nuLinha++;
     }
 	
 	// validar tipo ...
