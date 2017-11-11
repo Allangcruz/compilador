@@ -10,6 +10,15 @@ Elson Bento dos Santos
 */
 
 /**
+ * Verifica se a caracter ascii informado e uma condição de parada, para ser feita uma determinada analise.
+ * As condiçoes de parada sao os caracterers : \0, espaco, (, ), virgula, ponto e virgula
+ * @param int valorAscii
+ */
+bool checkCondicaoParada(int valorAscii) {
+	return ((valorAscii != 10) && (valorAscii != 32) && (valorAscii != 40) && (valorAscii != 41) && (valorAscii != 44) && (valorAscii != 59));
+}
+
+/**
  * Aplica validacoes referente a analise lexica.
  */
 void analiseLexica(Lista* lista) {
@@ -22,7 +31,7 @@ void analiseLexica(Lista* lista) {
     Elem* no = *lista;
     int i, valorAscii, nuLinha = 1, count = 0;
     char palavraAux[UCHAR_MAX], conteudoLinha[UCHAR_MAX], palavraAuxVariavel[UCHAR_MAX];
-    bool isVariavel = 0, isPalavraReservada = 0;
+    bool isVariavel = false, isPalavraReservada = false, isCondicaoParada = false;
     
 	limparLixoVetor(palavraAux);
     limparLixoVetor(conteudoLinha);
@@ -34,8 +43,9 @@ void analiseLexica(Lista* lista) {
 		for (i = 0; i < strlen(conteudoLinha); i++) {
 			valorAscii = (int) conteudoLinha[i]; 
 			
-			// condicoes de parada para a analizar [\0, espaco, (, ), virgula, ponto e virgula]
-			if ((valorAscii != 10) && (valorAscii != 32) && (valorAscii != 40) && (valorAscii != 41) && (valorAscii != 44) && (valorAscii != 59)) {
+			//if ((valorAscii != 10) && (valorAscii != 32) && (valorAscii != 40) && (valorAscii != 41) && (valorAscii != 44) && (valorAscii != 59)) {
+			isCondicaoParada = checkCondicaoParada(valorAscii);
+			if (isCondicaoParada == true) {
 				palavraAux[count] = (char) valorAscii;
 				count++;
 			} else {
@@ -54,7 +64,7 @@ void analiseLexica(Lista* lista) {
 					// (aqui são apenas para variaveis) tratar aqui os comportamento de variaveis e salvar na tabela de simbolos
 					printf("[%d] - variavel => (%s)\n", nuLinha, palavraAux);
 				}
-				
+
 				// compara se é uma variavel e se é uma palavra reservada
 				printf("isVariavel => [%d] - isPalavraReservada => [%d]\n", isVariavel, isPalavraReservada);
 				if (isVariavel == false && isPalavraReservada == false) {
