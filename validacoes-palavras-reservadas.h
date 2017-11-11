@@ -12,30 +12,94 @@ Elson Bento dos Santos
 /**
  * Aplica validacoes referente a analise lexica.
  */
-void analiseLexica() {
-	validarAberturaFechamentoPrograma();
+void analiseLexica(Lista* lista) {
+	validarAberturaFechamentoPrograma(lista);
+
+	if (lista == NULL) {
+        return false;
+    }
+    
+    Elem* no = *lista;
+    int i, nuLinha = 1;
+    int count = 0;
+    int valorAscii;
+    char palavraAux[UCHAR_MAX], conteudoLinha[UCHAR_MAX], palavraAuxVariavel[UCHAR_MAX];
+    
+	limparLixoVetor(palavraAux);
+    limparLixoVetor(conteudoLinha);
+    limparLixoVetor(palavraAuxVariavel);
+    
+    while (no != NULL) {
+		strcpy(conteudoLinha, no->dados.conteudo);
+		
+
+		for (i = 0; i < strlen(conteudoLinha); i++) {
+			valorAscii = (int) conteudoLinha[i]; 
+			
+			// condicoes de parada para a analizar [espaco, ponto e virgula, (, \0]
+			if ((valorAscii != 32) && (valorAscii != 59) && (valorAscii != 40) && (valorAscii != 10)) {
+				//puts(palavraAux);
+				palavraAux[count] = (char) valorAscii;
+				count++;
+			} else {
+				bool isVariavel = validarDeclaracaoVariaveis(palavraAux);
+				bool isPalavraReservada = 0;
+				
+				// exit(1);
+				// validar a palavra reservada ou como variavel, se ele nao variavel, verificar se é palavra reservada
+				if (!isVariavel) {
+					isPalavraReservada = validarPalavrasReservadas(isPalavraReservada);
+				}
+				
+				
+				
+				limparLixoVetor(palavraAux);
+				count=0;
+			}
+		}
+		
+		no = no->prox;
+    }
+	
+	// validarPalavrasReservadas(lista);
+	// validarDeclaracaoVariaveis(lista);
+	// validar tipo ...
 }
 
 
 /**
  * Valida palavras reservadas, utilizar como boleando, apos passar a palavra. validar separadamente.
  */
-void validarPalavrasReservadas() {
+int validarPalavrasReservadas(char* palavra) {
+	int retorno = 0;
 	
+	for (i = 0; i < NU_PALAVRA_RESERVADAS; i++) {
+		if (strcasecmp(palavra, palavrasReservadas[i]) != 0) {
+			//error(nuLinha, 3, palavraAux);
+		}		
+		
+	}
+	
+	return retorno;
 }
 
 /**
  * Valida palavras duplo balanceamento
  */
-void validarDuploBalanceamento() {
-	
+void validarDuploBalanceamento() {	
 } 
 
 /**
  * Valida declaracoes de variaveis.
  */
-void validarDeclaracaoVariaveis() {
+int validarDeclaracaoVariaveis(char *palavra) {
+	int teste = 0;
 	
+	if ((int) palavra[0] == 35 && (int) palavra[1] >= 97 &&  (int) palavra[1] <= 122) {
+		teste = 1;
+	}
+	
+	return teste;
 }
 
 /**
@@ -59,7 +123,7 @@ void limparLixoVetor(char vetor[]) {
  */
 void validarAberturaFechamentoPrograma(Lista* lista) {
 	if (lista == NULL) {
-        return;
+        exit(1);
     }
 
     Elem* no = *lista;
@@ -78,16 +142,14 @@ void validarAberturaFechamentoPrograma(Lista* lista) {
     for (i = 0; i < strlen(inicio); i++) {
 		valorAscii = (int) inicio[i]; 
 		
-		// desconsiderar palavras Maiusculas, alguns caracteres desnecessarios
-		if ((valorAscii >= 97 && valorAscii <= 122) || (valorAscii >= 48 && valorAscii <= 57)) {
+		if (valorAscii != 10) {
 			palavraAux[count] = (char) valorAscii;
 			count++;
-		}
-		// printf("%c - %i - %s \n", inicio[i], valorAscii, palavraAux);
+		} 
 	}
 	
 	if (strcasecmp(palavraAux, palavrasReservadas[0]) != 0) {
-		error(nuLinha, 2);
+		error(nuLinha, 2, palavraAux);
 	}
 	
 	// valida a palavra fim na ultima linha 
@@ -105,20 +167,14 @@ void validarAberturaFechamentoPrograma(Lista* lista) {
     for (i = 0; i < strlen(inicio); i++) {
 		valorAscii = (int) final[i]; 
 		
-		// desconsiderar palavras Maiusculas, alguns caracteres desnecessarios
-		if (valorAscii >= 97 && valorAscii <= 122) {
+		if (valorAscii != 10) {
 			palavraAux[count] = (char) valorAscii;
 			count++;
 		}
-		// printf("%c - %i - %s \n", final[i], valorAscii, palavraAux);
 	}
 
 	if (strcasecmp(palavraAux, palavrasReservadas[9]) != 0) {
-		error(nuLinha, 3);
+		error(nuLinha, 3, palavraAux);
 	}
-
-	// printf("%s", inicio);
-    // delimitadores com condição de paradas, ponto e virgula
-    // programa allan teste
 }
  

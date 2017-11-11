@@ -1,6 +1,10 @@
-programa2
+
+
+programa
 
 inteiro #numero, #teste;
 caractere #nome;
 
-fimaaa234
+fim
+
+

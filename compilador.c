@@ -1,6 +1,8 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <locale.h>
 #include <limits.h>
+#include <stdbool.h>
 
 /**
  * Constante com o total de palavras reservadas.
@@ -32,6 +34,7 @@ OK => 4 - Definir palavras reservadas (utilizar vetor)
 
 */
 
+
 void main ()
 {
 	setlocale(LC_ALL, "PORTUGUESE");
@@ -39,12 +42,12 @@ void main ()
 
     Lista* linhas;
 	linhas = lerArquivo();
-	validarAberturaFechamentoPrograma(linhas);
-    // imprimeLista(linhas);
+	analiseLexica(linhas);
+    //imprimeLista(linhas);
     liberaLista(linhas);
     printf("\n\n");
     
     system("pause");
-    //1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18
+    // 1,2,3,4,5,6,7,8,
 }
 
