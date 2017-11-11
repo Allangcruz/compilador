@@ -39,7 +39,8 @@ void analiseLexica(Lista* lista) {
 				palavraAux[count] = (char) valorAscii;
 				count++;
 			} else {
-				printf("==>Foi encontrado uma condição de parada (%d) <==\n\n", valorAscii);
+				printf("--------------------------------------------------------------------------------------\n");
+				printf("==> (%d) - Foi encontrado uma condição de parada (%d) <==\n", nuLinha, valorAscii);
 				isVariavel = validarDeclaracaoVariaveis(palavraAux);
 				
 				// verifica se não e uma variavel, se ele nao variavel, verificar se é palavra reservada
@@ -51,6 +52,7 @@ void analiseLexica(Lista* lista) {
 					}
 				} else {
 					// (aqui são apenas para variaveis) tratar aqui os comportamento de variaveis e salvar na tabela de simbolos
+					printf("[%d] - variavel => (%s)\n", nuLinha, palavraAux);
 				}
 				
 				// compara se é uma variavel e se é uma palavra reservada
@@ -61,6 +63,8 @@ void analiseLexica(Lista* lista) {
 				
 				limparLixoVetor(palavraAux);
 				count=0;
+				isVariavel = 0;
+				isPalavraReservada = 0;
 			}
 		}
 		
