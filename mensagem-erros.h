@@ -12,20 +12,20 @@ Elson Bento dos Santos
  */
 void error(int nuLinha, int tipoErro, char *palavra) {
 	switch(tipoErro) {
-		case 0: 
-			printf("Erro: é necessario iniciar com a palavra reservada 'programa'.\n");
-		break;
-		
 		case 1:
-			printf("Erro: é necessario finalizar com a palavra reservada 'fim'.\n");
+			printf("1 - Erro => Programa deve possuir a palavra reserva 'programa' no inicio (%s). [linha - %d].\n", palavra, nuLinha);
 		break;
 		
 		case 2:
-			printf("O sistema deve possuir a palavra reserva 'programa' no inicio (%s). [linha - %d].\n", palavra, nuLinha);
+			printf("2 - Erro => Programa deve possuir a palavra reserva 'fim' no fechamento (%s). [linha - %d].\n", palavra, nuLinha);
 		break;
 		
 		case 3:
-			printf("O sistema deve possuir a palavra reserva 'fim' no fechamento (%s). [linha - %d].\n", palavra, nuLinha);
+			printf("3 - Erro => A palavra (%s) não é uma variavel valida. [linha - %d].\n", palavra, nuLinha);
+		break;
+
+		case 4:
+			printf("4 - Erro => A palavra (%s) não é palavra reserva. [linha - %d].\n", palavra, nuLinha);
 		break;
 		
 		default:

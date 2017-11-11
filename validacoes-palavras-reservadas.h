@@ -20,10 +20,9 @@ void analiseLexica(Lista* lista) {
     }
     
     Elem* no = *lista;
-    int i, nuLinha = 1;
-    int count = 0;
-    int valorAscii;
+    int i, valorAscii, nuLinha = 1, count = 0;
     char palavraAux[UCHAR_MAX], conteudoLinha[UCHAR_MAX], palavraAuxVariavel[UCHAR_MAX];
+    bool isVariavel = 0, isPalavraReservada = 0;
     
 	limparLixoVetor(palavraAux);
     limparLixoVetor(conteudoLinha);
@@ -32,25 +31,32 @@ void analiseLexica(Lista* lista) {
     while (no != NULL) {
 		strcpy(conteudoLinha, no->dados.conteudo);
 		
-
 		for (i = 0; i < strlen(conteudoLinha); i++) {
 			valorAscii = (int) conteudoLinha[i]; 
 			
-			// condicoes de parada para a analizar [espaco, ponto e virgula, (, \0]
-			if ((valorAscii != 32) && (valorAscii != 59) && (valorAscii != 40) && (valorAscii != 10)) {
-				//puts(palavraAux);
+			// condicoes de parada para a analizar [\0, espaco, (, ), virgula, ponto e virgula]
+			if ((valorAscii != 10) && (valorAscii != 32) && (valorAscii != 40) && (valorAscii != 41) && (valorAscii != 44) && (valorAscii != 59)) {
 				palavraAux[count] = (char) valorAscii;
 				count++;
 			} else {
-				bool isVariavel = validarDeclaracaoVariaveis(palavraAux);
-				bool isPalavraReservada = 0;
+				isVariavel = validarDeclaracaoVariaveis(palavraAux);
 				
-				// exit(1);
 				// validar a palavra reservada ou como variavel, se ele nao variavel, verificar se é palavra reservada
-				if (!isVariavel) {
-					isPalavraReservada = validarPalavrasReservadas(isPalavraReservada);
+				if (! isVariavel) {
+					// imprime apenas as palavras reservadas
+					printf("[%d] - possivel palavra reservada => %s\n", nuLinha, palavraAux);
+					isPalavraReservada = validarPalavrasReservadas(palavraAux);
+					
+					if (isPalavraReservada) {
+						// imprime apenas as varaiveis encontradas
+						printf("[%d] - possivel variavel => %s\n", nuLinha, palavraAux);
+					}
+				} else {
+					// compara se é uma variavel e se é uma palavra reservada
+					if (isVariavel == false && isPalavraReservada == false) {
+						printf("(%d) - Nao e variavel e nem uma palavra reservada\n", nuLinha);
+					}
 				}
-				
 				
 				
 				limparLixoVetor(palavraAux);
@@ -59,47 +65,45 @@ void analiseLexica(Lista* lista) {
 		}
 		
 		no = no->prox;
+		nuLinha++;
     }
 	
-	// validarPalavrasReservadas(lista);
-	// validarDeclaracaoVariaveis(lista);
 	// validar tipo ...
 }
 
-
 /**
  * Valida palavras reservadas, utilizar como boleando, apos passar a palavra. validar separadamente.
+ *
+ * @param char* palavra
+ * @return int isValido
  */
 int validarPalavrasReservadas(char* palavra) {
-	int retorno = 0;
-	
+	int isValido = 1, i;
+
 	for (i = 0; i < NU_PALAVRA_RESERVADAS; i++) {
 		if (strcasecmp(palavra, palavrasReservadas[i]) != 0) {
-			//error(nuLinha, 3, palavraAux);
+			isValido = 0;
+			break;
 		}		
 		
 	}
 	
-	return retorno;
+	return isValido;
 }
 
 /**
- * Valida palavras duplo balanceamento
- */
-void validarDuploBalanceamento() {	
-} 
-
-/**
  * Valida declaracoes de variaveis.
+ *
+ * @param char *palavra
  */
 int validarDeclaracaoVariaveis(char *palavra) {
-	int teste = 0;
+	int isValido = 0;
 	
 	if ((int) palavra[0] == 35 && (int) palavra[1] >= 97 &&  (int) palavra[1] <= 122) {
-		teste = 1;
+		isValido = 1;
 	}
 	
-	return teste;
+	return isValido;
 }
 
 /**
@@ -114,6 +118,12 @@ void limparLixoVetor(char vetor[]) {
 		vetor[i] = '\0';
 		i ++;
 	}
+}
+
+/**
+ * Valida palavras duplo balanceamento
+ */
+void validarDuploBalanceamento() {	
 }
 
 /**
@@ -149,7 +159,7 @@ void validarAberturaFechamentoPrograma(Lista* lista) {
 	}
 	
 	if (strcasecmp(palavraAux, palavrasReservadas[0]) != 0) {
-		error(nuLinha, 2, palavraAux);
+		error(nuLinha, 1, palavraAux);
 	}
 	
 	// valida a palavra fim na ultima linha 
@@ -174,7 +184,7 @@ void validarAberturaFechamentoPrograma(Lista* lista) {
 	}
 
 	if (strcasecmp(palavraAux, palavrasReservadas[9]) != 0) {
-		error(nuLinha, 3, palavraAux);
+		error(nuLinha, 2, palavraAux);
 	}
 }
  

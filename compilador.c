@@ -29,9 +29,8 @@ OK => 4 - Definir palavras reservadas (utilizar vetor)
 5 - validar palavras e popular tabelas de simbolos
 	5.1 - As palavras reservadas sao case sensitive
 	5.2 - Validar variaveis
-6 - pesquisar algo que consiga medir tempo de execução e consumo de memoria, para no final exibir indicadores.
+6 - pesquisar algo que consiga medir consumo de memoria gasta para no final exibir indicadores.
 7 - Validar 
-
 */
 
 
@@ -41,13 +40,18 @@ void main ()
     printf("============ COMPILADOR ============ \n\n\n\n");
 
     Lista* linhas;
-	linhas = lerArquivo();
+    TabelaSimbolo* tabelaSimbolos = criaListaTabelaSimbolo();
+    
+    linhas = lerArquivo();
 	analiseLexica(linhas);
     //imprimeLista(linhas);
     liberaLista(linhas);
+
+    imprimeTabelaSimbolo(tabelaSimbolos);
+	liberaListaTabelaSimbolo(tabelaSimbolos);
+
     printf("\n\n");
-    
     system("pause");
-    // 1,2,3,4,5,6,7,8,
+    //1,2
 }
 
