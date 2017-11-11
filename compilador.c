@@ -37,7 +37,7 @@ OK => 4 - Definir palavras reservadas (utilizar vetor)
 void main ()
 {
 	setlocale(LC_ALL, "PORTUGUESE");
-    printf("============ COMPILADOR ============ \n\n\n\n");
+    printf("============ COMPILADOR ============ \n\n");
 
     Lista* linhas;
     TabelaSimbolo* tabelaSimbolos = criaListaTabelaSimbolo();
@@ -52,6 +52,6 @@ void main ()
 
     printf("\n\n");
     system("pause");
-    // 1
+    // 1, 
 }
 
