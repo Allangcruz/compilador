@@ -2,7 +2,4 @@ programa
 
 inteiro #numero, #teste;
 caractere #nome[10], #email[19], teste;
-real #a[6.2];
-leia(#a);
-escreva("bom dia", #numero, #email);
 fim

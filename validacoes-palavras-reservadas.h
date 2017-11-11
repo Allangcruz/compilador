@@ -39,25 +39,25 @@ void analiseLexica(Lista* lista) {
 				palavraAux[count] = (char) valorAscii;
 				count++;
 			} else {
+				printf("==>Foi encontrado uma condição de parada (%d) <==\n\n", valorAscii);
 				isVariavel = validarDeclaracaoVariaveis(palavraAux);
 				
-				// validar a palavra reservada ou como variavel, se ele nao variavel, verificar se é palavra reservada
+				// verifica se não e uma variavel, se ele nao variavel, verificar se é palavra reservada
 				if (! isVariavel) {
-					// imprime apenas as palavras reservadas
-					printf("[%d] - possivel palavra reservada => %s\n", nuLinha, palavraAux);
 					isPalavraReservada = validarPalavrasReservadas(palavraAux);
 					
-					if (isPalavraReservada) {
-						// imprime apenas as varaiveis encontradas
-						printf("[%d] - possivel variavel => %s\n", nuLinha, palavraAux);
+					if (isPalavraReservada == true) {
+						printf("[%d] - palavra reservada => (%s)\n", nuLinha, palavraAux);
 					}
 				} else {
-					// compara se é uma variavel e se é uma palavra reservada
-					if (isVariavel == false && isPalavraReservada == false) {
-						printf("(%d) - Nao e variavel e nem uma palavra reservada\n", nuLinha);
-					}
+					// (aqui são apenas para variaveis) tratar aqui os comportamento de variaveis e salvar na tabela de simbolos
 				}
 				
+				// compara se é uma variavel e se é uma palavra reservada
+				printf("isVariavel => [%d] - isPalavraReservada => [%d]\n", isVariavel, isPalavraReservada);
+				if (isVariavel == false && isPalavraReservada == false) {
+					printf("(%d) - Nao e variavel e nem uma palavra reservada.\n", nuLinha);
+				}
 				
 				limparLixoVetor(palavraAux);
 				count=0;
@@ -78,14 +78,13 @@ void analiseLexica(Lista* lista) {
  * @return int isValido
  */
 int validarPalavrasReservadas(char* palavra) {
-	int isValido = 1, i;
+	int isValido = 0, i;
 
 	for (i = 0; i < NU_PALAVRA_RESERVADAS; i++) {
-		if (strcasecmp(palavra, palavrasReservadas[i]) != 0) {
-			isValido = 0;
+		if (strcasecmp(palavra, palavrasReservadas[i]) == 0) {
+			isValido = 1;
 			break;
 		}		
-		
 	}
 	
 	return isValido;

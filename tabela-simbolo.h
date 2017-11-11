@@ -210,4 +210,3 @@ void exibirConsumoMemoria() {
 	printf("\n\n CONSUMO DE MEMORIA: (TENHO QUE IMPLEMENTAR)");
 }
 
-
