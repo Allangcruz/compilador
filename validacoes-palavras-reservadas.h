@@ -25,15 +25,16 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 	validarAberturaFechamentoPrograma(lista);
 
 	if (lista == NULL) {
-        return false;
+        exit(1);
     }
     
     Elem* no = *lista;
     int i, valorAscii, nuLinha, count = 0;
-    char palavraAux[UCHAR_MAX], conteudoLinha[UCHAR_MAX], palavraAuxVariavel[UCHAR_MAX];
-    bool isVariavel = false, isPalavraReservada = false, isCondicaoParada = false;
+    char palavraAux[UCHAR_MAX], conteudoLinha[UCHAR_MAX], palavraAuxVariavel[UCHAR_MAX], tipoVariavel[UCHAR_MAX];
+    bool isVariavel = false, isPalavraReservada = false, isCondicaoParada = false, isLinhaComVariavel = false;
     
 	limparLixoVetor(palavraAux);
+    limparLixoVetor(tipoVariavel);
     limparLixoVetor(conteudoLinha);
     limparLixoVetor(palavraAuxVariavel);
     
@@ -58,15 +59,30 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 					isPalavraReservada = validarPalavrasReservadas(palavraAux);
 					
 					if (isPalavraReservada == true) {
+						// quando for palavra reservada posso tratar aqui, exemplo se for tipo de variavel posso guarda para validar depois
+						// caso se, senao, leia, escreva, para. preciso tratar cada um.
+						
 						// printf("[Linha: %d] - palavra reservada => (%s)\n", nuLinha, palavraAux);
+						
+						if (isTipoVariavel(palavraAux) == 1) {
+							strcpy(tipoVariavel, palavraAux);
+							isLinhaComVariavel = true;
+						}	
 					}
 				} else {
 					// (aqui são apenas para variaveis) tratar aqui os comportamento de variaveis e salvar na tabela de simbolos
 					//printf("[Linha: %d] - variavel => (%s)\n", nuLinha, palavraAux);
-
-    				Simbolo novoSimbolo;
-    				strcpy(novoSimbolo.palavra, palavraAux);
-					insereFinalTabelaSimbolo(tabelaSimbolos, novoSimbolo);
+					
+					if (isLinhaComVariavel == true) {
+						// TODO nao sei o que fazer aqui, acredito que so posso salvar se 
+						
+						// salva a variavel valida
+	    				Simbolo novoSimbolo;
+	    				strcpy(novoSimbolo.palavra, palavraAux);
+	    				strcpy(novoSimbolo.tipo, tipoVariavel);
+						insereFinalTabelaSimbolo(tabelaSimbolos, novoSimbolo);
+					}
+					
 				}
 				
 				// por causa que quando e encontrado 2 ou mais criterio de paradas seguidos ele estava comparando com a palavra vazia, e isso nao pode acontecer
@@ -87,6 +103,8 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 		}
 		
 		no = no->prox;
+		isLinhaComVariavel = false;
+		limparLixoVetor(tipoVariavel);
     }
 	
 	// validar tipo ...
@@ -123,6 +141,24 @@ int validarDeclaracaoVariaveis(char *palavra) {
 		isValido = 1;
 	}
 	
+	return isValido;
+}
+
+/**
+ * Verifica se a palavra reservada é um tipo de variavel.
+ *
+ * @param char *palavra
+ */
+int isTipoVariavel(char *palavra) {
+	int isValido = 0, i;
+	
+	for (i = 0; i < NU_TIPO_VARIAVEL; i++) {
+		if (strcmp(palavra, tiposVariaveis[i]) == 0) {
+			isValido = 1;
+			break;
+		}		
+	}
+
 	return isValido;
 }
 

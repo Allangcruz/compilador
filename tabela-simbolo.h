@@ -195,8 +195,8 @@ void imprimeTabelaSimbolo(TabelaSimbolo* lista) {
     while (no != NULL) {
         printf("Palavra: %s \n", no->dados.palavra);
         printf("Tipo: %s \n", no->dados.tipo);
-        printf("Total caracter da palavra: %d \n", strlen(no->dados.palavra));
-        printf("\n");
+        //printf("Total caracter da palavra: %d \n", strlen(no->dados.palavra));
+        printf("-------------------------------------------------------------\n");
         no = no->prox;
     }
     
@@ -207,6 +207,6 @@ void imprimeTabelaSimbolo(TabelaSimbolo* lista) {
  * Exibe o tatal de memoria consumida pelo compilado.	
  */
 void exibirConsumoMemoria() {
-	printf("\nCONSUMO DE MEMORIA: (TENHO QUE IMPLEMENTAR)");
+	printf("\nCONSUMO DE MEMORIA: %d ", TOTAL_CONSUMO_MEMORIA);
 }
 
