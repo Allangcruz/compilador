@@ -20,12 +20,16 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
     
     Elem* no = *lista;
     int i, valorAscii, nuLinha, count = 0;
-    char palavraAux[UCHAR_MAX], conteudoLinha[UCHAR_MAX], palavraAuxVariavel[UCHAR_MAX], tipoVariavel[UCHAR_MAX];
+    char palavraAux[UCHAR_MAX], conteudoLinha[UCHAR_MAX], palavraAuxVariavel[UCHAR_MAX], tipoVariavel[UCHAR_MAX], tamanhoPalavra[UCHAR_MAX], auxTamanhoPalavra[UCHAR_MAX];
     bool isVariavel = false, isPalavraReservada = false, isCondicaoParada = false, isLinhaComVariavel = false;
+    
+    char valorTamanhoAllan[UCHAR_MAX], allan[UCHAR_MAX];
     
 	limparLixoVetor(palavraAux);
     limparLixoVetor(tipoVariavel);
     limparLixoVetor(conteudoLinha);
+    limparLixoVetor(tamanhoPalavra);
+    limparLixoVetor(auxTamanhoPalavra);
     limparLixoVetor(palavraAuxVariavel);
     
     while (no != NULL) {
@@ -41,8 +45,8 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 				palavraAux[count] = (char) valorAscii;
 				count++;
 			} else {
-				// printf("--------------------------------------------------------------------------------------\n");
-				// printf("==> (Linha: %d) - Foi encontrado uma condição de parada (ascii: %d) <==\n", nuLinha, valorAscii);
+				// TODO verificar se a variavel possui tamanho, caso sim, armazenar o tamanho
+				// Remover tambem as chaves do tamanho pois estão invalidas
 				isVariavel = validarDeclaracaoVariaveis(palavraAux);
 				
 				// verifica se não e uma variavel, se ele nao variavel, verificar se é palavra reservada
@@ -53,35 +57,34 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 						// quando for palavra reservada posso tratar aqui, exemplo se for tipo de variavel posso guarda para validar depois
 						// caso se, senao, leia, escreva, para. preciso tratar cada um.
 						
-						// printf("[Linha: %d] - palavra reservada => (%s)\n", nuLinha, palavraAux);
-						
 						if (isTipoVariavel(palavraAux) == 1) {
 							strcpy(tipoVariavel, palavraAux);
 							isLinhaComVariavel = true;
 						}	
 					}
 				} else {
-					// (aqui são apenas para variaveis) tratar aqui os comportamento de variaveis e salvar na tabela de simbolos
-					//printf("[Linha: %d] - variavel => (%s)\n", nuLinha, palavraAux);
-					
 					if (isLinhaComVariavel == true) {
-						// TODO nao sei o que fazer aqui, acredito que so posso salvar se 
-						
 						// salva a variavel valida
 	    				Simbolo novoSimbolo;
+	    				
+	    				// caso tenha tamanho recupera o tamanho e adiciona na tabela de simbolo
+						getTamanhoVariavel(palavraAux, auxTamanhoPalavra);
+						strcpy(tamanhoPalavra, auxTamanhoPalavra);
+						strcpy(novoSimbolo.tamanho, tamanhoPalavra);
+	    				
+						removeTamanhoVariavel(palavraAux);
 	    				strcpy(novoSimbolo.palavra, palavraAux);
 	    				strcpy(novoSimbolo.tipo, tipoVariavel);
+						
 						insereFinalTabelaSimbolo(tabelaSimbolos, novoSimbolo);
+						limparLixoVetor(auxTamanhoPalavra);
 					}
-					
 				}
 				
 				// por causa que quando e encontrado 2 ou mais criterio de paradas seguidos ele estava comparando com a palavra vazia, e isso nao pode acontecer
 				if (strlen(palavraAux) > 0) {
 					// compara se é uma variavel e se é uma palavra reservada
-					// printf("isVariavel => [%d] - isPalavraReservada => [%d] (i: %d, coluna: %d) \n", isVariavel, isPalavraReservada, i, strlen(palavraAux));
 					if (isVariavel == false && isPalavraReservada == false) {
-						//printf("(linha: %d) - Nao e variavel e nem uma palavra reservada (%s).\n", nuLinha, palavraAux);
 						error(nuLinha, 5, palavraAux);
 					}
 				}
@@ -97,8 +100,6 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 		isLinhaComVariavel = false;
 		limparLixoVetor(tipoVariavel);
     }
-	
-	// validar tipo ...
 }
 
 /**
@@ -140,8 +141,8 @@ int validarDeclaracaoVariaveis(char *palavra, int nuLinha) {
 		for (i = 2; i < strlen(palavra); i++) {
 			valorAscii = (int) palavra[i];
 			
-			// permiter apenas a-z, 0-9, A-Z
-			if (! ((valorAscii >= 97 && valorAscii <= 122) || (valorAscii >= 48 && valorAscii <= 57) || (valorAscii >= 65 && valorAscii <= 90))) {
+			// permiter apenas a-z, 0-9, A-Z, [, ]
+			if (! ((valorAscii >= 97 && valorAscii <= 122) || (valorAscii >= 48 && valorAscii <= 57) || (valorAscii >= 65 && valorAscii <= 90) || valorAscii == 91 || valorAscii == 93)) {
 				isValido = 0;
 				error(nuLinha, 6, palavra);
 			}
@@ -150,6 +151,74 @@ int validarDeclaracaoVariaveis(char *palavra, int nuLinha) {
 	
 	return isValido;
 }
+
+/**
+ * Verifica se a variavel informada possui tamanho, caso sim, retorna o tamanho.
+ *
+ * @param char palavra[]
+ */
+void getTamanhoVariavel(char palavra[], char retorno[]) {
+
+	int i, tamanhoPalavra = strlen(palavra) - 1, valorAscii, count = 0;
+	char valorTamanho[UCHAR_MAX], auxValorTamanho[UCHAR_MAX];
+	
+	limparLixoVetor(valorTamanho);
+	limparLixoVetor(auxValorTamanho);
+	
+	// percorre a palavra de traz para frente
+	for (i = tamanhoPalavra; i >= 0; i--) {
+		valorAscii = palavra[i];
+		// printf("(%d) - %c \n", i, palavra[i]);
+
+		// verifica se o ultimo caracter é um ], caso seja vai percorrendo para salvar o tamanho
+		if (i == tamanhoPalavra && valorAscii == 93) {
+			continue;
+		} else if((valorAscii >= 48 && valorAscii <= 57) && valorAscii != 91) { // condição que ira acumular enquanto for numero e nao encontrar [.
+			auxValorTamanho[count] = palavra[i];
+			// printf("=>=> (%d) - %c \n", i, palavra[i]);
+			count++;
+		} else if (valorAscii == 91) {
+			break;
+		}
+	}
+	
+	count = 0;
+	
+	for (i = strlen(auxValorTamanho) - 1; i >= 0; i--) {
+		valorTamanho[count] = auxValorTamanho[i];
+		count++;
+	}
+	
+	// por motivos que nao sei, criar uma funcao que retorna string esta dando erro
+	// entao uma maneira de contornar tive que devolver o valor por referencia, infelizmente.
+	strcpy(retorno, valorTamanho);
+}
+
+/**
+ * Remove a string referente ao tamanho da variavel, [].
+ *
+ * @param char palavra[]
+ */
+void removeTamanhoVariavel(char palavra[]) {
+	int i, tamanhoPalavra = strlen(palavra) - 1, valorAscii;
+	
+	// percorre a palavra de traz para frente
+	for (i = tamanhoPalavra; i >= 0; i--) {
+		valorAscii = palavra[i];
+
+		// verifica se o ultimo caracter é um ], caso seja vai percorrendo para salvar o tamanho
+		if (i == tamanhoPalavra && valorAscii == 93) {
+			palavra[i] = '\0';
+			continue;
+		} else if((valorAscii >= 48 && valorAscii <= 57) && valorAscii != 91) { // condição que ira acumular enquanto for numero e nao encontrar [.
+			palavra[i] = '\0';
+		} else if (valorAscii == 91) {
+			palavra[i] = '\0';
+			break;
+		}
+	}
+}
+
 
 /**
  * Verifica se a palavra reservada é um tipo de variavel.

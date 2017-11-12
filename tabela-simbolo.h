@@ -8,8 +8,7 @@ Elson Bento dos Santos
  * Struct que armazena a informacoes do simbolo da tabela de simbolos.
  */
 typedef struct simbolo {
-	char tipo[UCHAR_MAX], palavra[UCHAR_MAX], valor[UCHAR_MAX];
-    int tamanho;
+	char tipo[UCHAR_MAX], palavra[UCHAR_MAX], valor[UCHAR_MAX], tamanho[UCHAR_MAX];
 } Simbolo;
 
 /**
@@ -195,7 +194,7 @@ void imprimeTabelaSimbolo(TabelaSimbolo* lista) {
     while (no != NULL) {
         printf("Palavra: %s \n", no->dados.palavra);
         printf("Tipo: %s \n", no->dados.tipo);
-        //printf("Total caracter da palavra: %d \n", strlen(no->dados.palavra));
+        printf("Tamanho: %s \n", no->dados.tamanho);
         printf("------------------------------------------------\n");
         no = no->prox;
     }

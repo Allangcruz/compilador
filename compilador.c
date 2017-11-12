@@ -19,6 +19,9 @@ Elson Bento dos Santos
 
 /**
  * Armazena o total de memoria utilizada no compilador.
+- Depois exibir ate a coluna que consta o erro.
+
+- Tratar palavras dentro de aspas
  */
 int TOTAL_CONSUMO_MEMORIA = 0;
 
@@ -39,7 +42,7 @@ void main ()
 	printf("================================================================\n");
     printf("ALLAN GONÇALVE DA CRUZ - ELSON BENTO DOS SANTOS\n");
     printf("================================================================\n");
-    
+
     Lista* linhas;
     TabelaSimbolo* tabelaSimbolos = criaListaTabelaSimbolo();
     
@@ -53,6 +56,6 @@ void main ()
 	
     printf("\n\n");
     system("pause");
-    // 1,2,3,4,5
+    // 1
 }
 
