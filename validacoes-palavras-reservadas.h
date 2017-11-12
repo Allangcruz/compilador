@@ -102,7 +102,7 @@ int validarPalavrasReservadas(char* palavra) {
 	int isValido = 0, i;
 
 	for (i = 0; i < NU_PALAVRA_RESERVADAS; i++) {
-		if (strcasecmp(palavra, palavrasReservadas[i]) == 0) {
+		if (strcmp(palavra, palavrasReservadas[i]) == 0) {
 			isValido = 1;
 			break;
 		}		
@@ -176,9 +176,7 @@ void validarAberturaFechamentoPrograma(Lista* lista) {
 		} 
 	}
 
-	printf("|| %s - %s - %d ||", palavraAux, palavrasReservadas[0], strcasecmp(palavraAux, palavrasReservadas[0]));
-
-	if (strcasecmp(palavraAux, palavrasReservadas[0]) != 0) {
+	if (strcmp(palavraAux, palavrasReservadas[0]) != 0) {
 		error(nuLinha, 1, palavraAux);
 	}
 	
@@ -203,10 +201,8 @@ void validarAberturaFechamentoPrograma(Lista* lista) {
 		}
 	}
 
-	if (strcasecmp(palavraAux, palavrasReservadas[9]) != 0) {
+	if (strcmp(palavraAux, palavrasReservadas[9]) != 0) {
 		error(nuLinha, 2, palavraAux);
 	}
-	
-	exit(1);
 }
  

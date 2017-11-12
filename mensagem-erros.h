@@ -13,11 +13,11 @@ Elson Bento dos Santos
 void error(int nuLinha, int tipoErro, char *palavra) {
 	switch(tipoErro) {
 		case 1:
-			printf("1 - Erro => Programa deve possuir a palavra reserva 'programa' no inicio (%s). [linha - %d].\n", palavra, nuLinha);
+			printf("1 - Erro => Deve possuir a palavra reserva 'programa' no inicio, foi encontrado: (%s). [linha - %d].\n", palavra, nuLinha);
 		break;
 		
 		case 2:
-			printf("2 - Erro => Programa deve possuir a palavra reserva 'fim' no fechamento (%s). [linha - %d].\n", palavra, nuLinha);
+			printf("2 - Erro => Deve possuir a palavra reserva 'fim' no fechamento, foi encontrado: (%s). [linha - %d].\n", palavra, nuLinha);
 		break;
 		
 		case 3:

@@ -1,4 +1,5 @@
-Programa
+
+programa
 
 inteiro #numero, #teste, #i;
 caractere #nome[10], #email[19];
