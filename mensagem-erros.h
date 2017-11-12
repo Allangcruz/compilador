@@ -29,7 +29,7 @@ void error(int nuLinha, int tipoErro, char *palavra) {
 		break;
 		
 		case 5:
-			printf("5 - Erro => A palavra (%s) não é uma palavra reserva e nem variavel, não consta no escopo. [linha - %d].\n", palavra, nuLinha);
+			printf("5 - Erro => A palavra (%s) não é uma palavra reservada e nem variavel, não consta no escopo. [linha - %d].\n", palavra, nuLinha);
 		break;
 		
 		default:

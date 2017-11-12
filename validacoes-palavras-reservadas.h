@@ -157,18 +157,16 @@ void validarAberturaFechamentoPrograma(Lista* lista) {
     }
 
     Elem* no = *lista;
-    char inicio[UCHAR_MAX];
-    char final[UCHAR_MAX];
+    char inicio[UCHAR_MAX], final[UCHAR_MAX], palavraAux[UCHAR_MAX];
+    int i, nuLinha, count = 0, valorAscii;
     
-    strcpy(inicio, no->dados.conteudo);
-    int i;
-    int nuLinha = no->dados.linha;
-    int count = 0;
-    int valorAscii;
-    char palavraAux[UCHAR_MAX];
-    
+    limparLixoVetor(final);
+    limparLixoVetor(inicio);
     limparLixoVetor(palavraAux);
     
+    strcpy(inicio, no->dados.conteudo);
+    nuLinha = no->dados.linha;
+
     for (i = 0; i < strlen(inicio); i++) {
 		valorAscii = (int) inicio[i]; 
 		
@@ -177,7 +175,9 @@ void validarAberturaFechamentoPrograma(Lista* lista) {
 			count++;
 		} 
 	}
-	
+
+	printf("|| %s - %s - %d ||", palavraAux, palavrasReservadas[0], strcasecmp(palavraAux, palavrasReservadas[0]));
+
 	if (strcasecmp(palavraAux, palavrasReservadas[0]) != 0) {
 		error(nuLinha, 1, palavraAux);
 	}
@@ -206,5 +206,7 @@ void validarAberturaFechamentoPrograma(Lista* lista) {
 	if (strcasecmp(palavraAux, palavrasReservadas[9]) != 0) {
 		error(nuLinha, 2, palavraAux);
 	}
+	
+	exit(1);
 }
  

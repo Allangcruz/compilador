@@ -19,7 +19,6 @@ typedef struct linha {
     int linha;
 } Linha;
 
-
 /**
  * Struct que armazena os elementos da lista, de acordo com o tipo do dado.
  */

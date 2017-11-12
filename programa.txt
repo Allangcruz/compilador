@@ -1,5 +1,10 @@
-programa
+Programa
 
-inteiro #numero, #teste;
+inteiro #numero, #teste, #i;
 caractere #nome[10], #email[19];
+real #allan;
 
+leia(#numero, #nome);
+escreva(#teste, #nome);
+
+fim
