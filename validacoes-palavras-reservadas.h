@@ -3,20 +3,10 @@ Alunos:
 Allan Gonçalves da Cruz
 Elson Bento dos Santos
 =================================================================================================================================
-	Validações:
-	1 - O arquivo começa com a palavra reservada "programa" e termina com a palavra reservada "fim".
-	2 - As palavras reservadas validas são apenas as que estão definidas na variavel global "palavrasReservadas", case sensitive.
+	Tabela ascii util para vazer comparaçoes pois comparar string nao estava sendo confiavel: 
+	http://www.ricardoarrigoni.com.br/tabela-ascii-completa/
 ==================================================================================================================================
 */
-
-/**
- * Verifica se a caracter ascii informado e uma condição de parada, para ser feita uma determinada analise.
- * As condiçoes de parada sao os caracterers : \0, espaco, (, ), virgula, ponto e virgula
- * @param int valorAscii
- */
-bool checkCondicaoParada(int valorAscii) {
-	return ((valorAscii != 10) && (valorAscii != 32) && (valorAscii != 40) && (valorAscii != 41) && (valorAscii != 44) && (valorAscii != 59));
-}
 
 /**
  * Aplica validacoes referente a analise lexica.
@@ -45,7 +35,8 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 		for (i = 0; i < strlen(conteudoLinha); i++) {
 			valorAscii = (int) conteudoLinha[i]; 
 			
-			// \0, espaco, (, ), virgula, ponto e virgula
+			// Verifica se a caracter ascii informado e uma condição de parada, para ser feita uma determinada analise.
+			// As condiçoes de parada sao os caracterers : \0, espaco, (, ), virgula, ponto e virgula
 			if ((valorAscii != 10) && (valorAscii != 32) && (valorAscii != 40) && (valorAscii != 41) && (valorAscii != 44) && (valorAscii != 59)) {
 				palavraAux[count] = (char) valorAscii;
 				count++;
@@ -133,12 +124,28 @@ int validarPalavrasReservadas(char* palavra) {
  * Valida declaracoes de variaveis.
  *
  * @param char *palavra
+ * @param int nuLinha
  */
-int validarDeclaracaoVariaveis(char *palavra) {
-	int isValido = 0;
+int validarDeclaracaoVariaveis(char *palavra, int nuLinha) {
+	int isValido = 0, i, valorAscii;
 	
-	if ((int) palavra[0] == 35 && (int) palavra[1] >= 97 &&  (int) palavra[1] <= 122) {
-		isValido = 1;
+	if ((int) palavra[0] == 35) {
+		if ((int) palavra[1] >= 97 &&  (int) palavra[1] <= 122) {
+			isValido = 1;
+		} else {
+			isValido = 0;
+			error(nuLinha, 6, palavra);
+		}
+		
+		for (i = 2; i < strlen(palavra); i++) {
+			valorAscii = (int) palavra[i];
+			
+			// permiter apenas a-z, 0-9, A-Z
+			if (! ((valorAscii >= 97 && valorAscii <= 122) || (valorAscii >= 48 && valorAscii <= 57) || (valorAscii >= 65 && valorAscii <= 90))) {
+				isValido = 0;
+				error(nuLinha, 6, palavra);
+			}
+		}
 	}
 	
 	return isValido;

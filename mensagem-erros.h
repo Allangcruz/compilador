@@ -32,6 +32,10 @@ void error(int nuLinha, int tipoErro, char *palavra) {
 			printf("5 - Erro => A palavra (%s) não é uma palavra reservada e nem variavel, não consta no escopo. [linha - %d].\n", palavra, nuLinha);
 		break;
 		
+		case 6:
+			printf("6 - Erro => A variavel informada (%s) esta invalida. [linha - %d].\n", palavra, nuLinha);
+		break;	
+		
 		default:
 			// TODO definir .... ou remover caso nao seja necessario
 		break;
