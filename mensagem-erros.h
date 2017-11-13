@@ -34,7 +34,20 @@ void error(int nuLinha, int tipoErro, char *palavra) {
 		
 		case 6:
 			printf("6 - Erro => A variavel informada (%s) esta invalida. [linha - %d].\n", palavra, nuLinha);
+		break;
+		
+		case 7:
+			printf("7 - Erro => A variavel (%s) não está declara. [linha - %d].\n", palavra, nuLinha);
 		break;	
+		
+		case 8:
+			printf("8 - Erro => É obrigatorio um valor de tamanho para variavel, (%s). [linha - %d].\n", palavra, nuLinha);
+		break;
+		
+		case 9:
+			printf("9 - Erro => Há ausência do caracter '[' ou ']', (%s). [linha - %d].\n", palavra, nuLinha);
+		break;	
+
 		
 		default:
 			// TODO definir .... ou remover caso nao seja necessario

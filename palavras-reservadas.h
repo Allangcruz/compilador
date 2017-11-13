@@ -6,7 +6,7 @@ char palavrasReservadas[NU_PALAVRA_RESERVADAS][10] = {"programa", "leia", "escre
 /**
  * Vetor com palavras reservadas para tipo de variaveis.
  */
-char tiposVariaveis[NU_TIPO_VARIAVEL][10] = {"inteiro", "caractere", "real", "fim"};
+char tiposVariaveis[NU_TIPO_VARIAVEL][10] = {"inteiro", "caractere", "real"};
 
 /**
  * Imprime o vetor com todas as palavras reservadas

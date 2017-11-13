@@ -1,9 +1,8 @@
 
 programa
 
-inteiro #numero, #neste, #i;
-caractere #nome[10], #email[19];
-real #allan;
+inteiro #numero, #teste, #i;
+caractere #nome[10], #email[];
 
 leia(#numero, #nome);
 escreva(#teste, #nome);

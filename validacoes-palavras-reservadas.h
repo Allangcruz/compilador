@@ -68,7 +68,7 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 	    				Simbolo novoSimbolo;
 	    				
 	    				// caso tenha tamanho recupera o tamanho e adiciona na tabela de simbolo
-						getTamanhoVariavel(palavraAux, auxTamanhoPalavra);
+						getTamanhoVariavel(palavraAux, auxTamanhoPalavra, nuLinha);
 						strcpy(tamanhoPalavra, auxTamanhoPalavra);
 						strcpy(novoSimbolo.tamanho, tamanhoPalavra);
 	    				
@@ -79,7 +79,15 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 						insereFinalTabelaSimbolo(tabelaSimbolos, novoSimbolo);
 						limparLixoVetor(auxTamanhoPalavra);
 					}
+					
+					// TODO validar se a variavel ja foi declarada. 
+					if (validarVariavelDeclarada(palavraAux, tabelaSimbolos) == 0) {
+						error(nuLinha, 7, palavraAux);
+					}
+
 				}
+				
+				// TODO verificar se a linha é uma declaracao de variavel e se o ultimo caracter é ;
 				
 				// por causa que quando e encontrado 2 ou mais criterio de paradas seguidos ele estava comparando com a palavra vazia, e isso nao pode acontecer
 				if (strlen(palavraAux) > 0) {
@@ -100,6 +108,31 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 		isLinhaComVariavel = false;
 		limparLixoVetor(tipoVariavel);
     }
+}
+
+/**
+ * Valida se a variavel já foi declarada.
+ *
+ * @param char * palavra
+ */
+int validarVariavelDeclarada(char* palavra, TabelaSimbolo* tabelaSimbolos) {
+	int isValido = 0;
+    
+	if (tabelaSimbolos == NULL) {
+        exit(1);
+    }
+	
+	ElemSimbolo* no = *tabelaSimbolos;
+
+    while (no != NULL) {
+    	if (strcmp(palavra, no->dados.palavra) == 0) {
+    		isValido = 1;
+    		break;
+		}
+        no = no->prox;
+    }
+	
+	return isValido;
 }
 
 /**
@@ -156,10 +189,12 @@ int validarDeclaracaoVariaveis(char *palavra, int nuLinha) {
  * Verifica se a variavel informada possui tamanho, caso sim, retorna o tamanho.
  *
  * @param char palavra[]
+ * @param char retorno[]
+ * @param int nuLinha
  */
-void getTamanhoVariavel(char palavra[], char retorno[]) {
+void getTamanhoVariavel(char palavra[], char retorno[], int nuLinha) {
 
-	int i, tamanhoPalavra = strlen(palavra) - 1, valorAscii, count = 0;
+	int i, tamanhoPalavra = strlen(palavra) - 1, valorAscii, count = 0, countValorEntreConchete = 0, isPossuiConchete = 0;
 	char valorTamanho[UCHAR_MAX], auxValorTamanho[UCHAR_MAX];
 	
 	limparLixoVetor(valorTamanho);
@@ -172,13 +207,26 @@ void getTamanhoVariavel(char palavra[], char retorno[]) {
 
 		// verifica se o ultimo caracter é um ], caso seja vai percorrendo para salvar o tamanho
 		if (i == tamanhoPalavra && valorAscii == 93) {
+			isPossuiConchete++;
 			continue;
 		} else if((valorAscii >= 48 && valorAscii <= 57) && valorAscii != 91) { // condição que ira acumular enquanto for numero e nao encontrar [.
 			auxValorTamanho[count] = palavra[i];
+			countValorEntreConchete++;
+			
 			// printf("=>=> (%d) - %c \n", i, palavra[i]);
 			count++;
 		} else if (valorAscii == 91) {
+			isPossuiConchete++;
 			break;
+		}
+	}
+	
+	// se existir apenas um abertura ou fechamento de conchete
+	if (isPossuiConchete == 1) {
+		error(nuLinha, 9, palavra);
+	} else if (isPossuiConchete == 2) {
+		if (countValorEntreConchete == 0) {
+			error(nuLinha, 8, palavra);
 		}
 	}
 	
