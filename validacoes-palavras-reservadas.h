@@ -21,9 +21,7 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
     Elem* no = *lista;
     int i, valorAscii, nuLinha, count = 0;
     char palavraAux[UCHAR_MAX], conteudoLinha[UCHAR_MAX], palavraAuxVariavel[UCHAR_MAX], tipoVariavel[UCHAR_MAX], tamanhoPalavra[UCHAR_MAX], auxTamanhoPalavra[UCHAR_MAX];
-    bool isVariavel = false, isPalavraReservada = false, isCondicaoParada = false, isLinhaComVariavel = false, isString = false;
-    
-    char valorTamanhoAllan[UCHAR_MAX], allan[UCHAR_MAX];
+    bool isVariavel = false, isPalavraReservada = false, isCondicaoParada = false, isLinhaComVariavel = false, isString = false, isPossuiPontoVirgula = false;
     
 	limparLixoVetor(palavraAux);
     limparLixoVetor(tipoVariavel);
@@ -39,15 +37,17 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 		for (i = 0; i < strlen(conteudoLinha); i++) {
 			valorAscii = (int) conteudoLinha[i]; 
 			
+			if (valorAscii ==59) {
+				isPossuiPontoVirgula = true;
+			}
+			
 			// Verifica se a caracter ascii informado e uma condição de parada, para ser feita uma determinada analise.
-			// As condiçoes de parada sao os caracterers : \0, espaco, (, ), virgula, ponto e virgula, #
+			// As condiçoes de parada sao os caracterers : \0, espaco, (, ), virgula, ponto virgula, #
 			if ((valorAscii != 10) && (valorAscii != 32) && (valorAscii != 40) && (valorAscii != 41) && (valorAscii != 44) && (valorAscii != 59) && (valorAscii != 35)) {
 				palavraAux[count] = (char) valorAscii;
 				count++;
 			} else {
 							
-				// TODO verificar se a variavel possui tamanho, caso sim, armazenar o tamanho
-				// Remover tambem as chaves do tamanho pois estão invalidas
 				isVariavel = validarDeclaracaoVariaveis(palavraAux);
 				
 				// verifica se não e uma variavel, se ele nao variavel, verificar se é palavra reservada
@@ -85,6 +85,10 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 					if (validarVariavelDeclarada(palavraAux, tabelaSimbolos) == 0) {
 						error(nuLinha, 7, palavraAux);
 					}
+					
+					// TODO verifica se a variavel esta sendo redeclarada
+					
+					// TODO Validar ponto e virgula no final da linha
 				}
 				
 				// TODO verificar se a linha é uma declaracao de variavel e se o ultimo caracter é ;
@@ -115,12 +119,45 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 					count++;	
 				}
 			}
-		}
+			
+		} // fim for que percorre as colunas da linha
 		
+		isPossuiPontoVirgula = validaDeclaracaoComPontoVirgula(conteudoLinha, nuLinha);
+		
+		// verifica se a linha possui declaração de variavel e tem ; nessa linha
+		if (isLinhaComVariavel == true && isPossuiPontoVirgula == false) {
+			error(nuLinha, 11, conteudoLinha);
+		}
+
 		no = no->prox;
 		isLinhaComVariavel = false;
 		limparLixoVetor(tipoVariavel);
-    }
+		isPossuiPontoVirgula = false;
+    } // fim while que percorre as linhas
+}
+
+/**
+ * Verifica se a linha possui ; no final
+ *
+ * @param char* conteudoLinha
+ * @param int nuLinha
+ */
+int validaDeclaracaoComPontoVirgula(char* conteudoLinha, int nuLinha) {
+	int isValido = 0, i, valorAscii, countTotalPontoVirgula = 0;
+	
+	for (i = 0; i < strlen(conteudoLinha); i++) {
+		valorAscii = (int) conteudoLinha[i]; 
+		
+		if (valorAscii == 59) {
+			countTotalPontoVirgula++;
+		}
+	}
+	
+	if (countTotalPontoVirgula == 1) {
+		isValido = 1;
+	}
+	
+	return isValido;
 }
 
 /**

@@ -11,6 +11,9 @@ Elson Bento dos Santos
  * @param int tipoErro
  */
 void error(int nuLinha, int tipoErro, char *palavra) {
+	
+	removerQuebraLinha(palavra);
+	
 	switch(tipoErro) {
 		case 1:
 			printf("1 - Erro => Deve possuir a palavra reserva 'programa' no inicio, foi encontrado: (%s). [linha - %d].\n", palavra, nuLinha);
@@ -52,10 +55,38 @@ void error(int nuLinha, int tipoErro, char *palavra) {
 			printf("10 - Erro => O '%c' precisa ter duplo balanceamento, (%s). [linha - %d].\n", (char) 34, palavra, nuLinha);
 		break;
 
+		case 11:
+			printf("11 - Erro => A linha é uma declaração de variavel e a mesma deve conter ';' no final da linha (%s). [linha - %d].\n", palavra, nuLinha);
+		break;
 		
 		default:
-			// TODO definir .... ou remover caso nao seja necessario
+			printf("Foi selecionando um tipo de erro não definido no case.\n");
 		break;
 	}
 	exit(1);
 }
+
+/**
+ * Remove a quebra de linha da palavra informada
+ *
+ * @param char * palavra
+ */
+void removerQuebraLinha(char* palavra) {
+	int i, valorAscii, count = 0;
+	char palavraAux[UCHAR_MAX];
+	
+	limparLixoVetor(palavraAux);
+	
+	for (i = 0; i < strlen(palavra); i++) {
+		valorAscii = (int) palavra[i]; 
+		
+		
+		if (valorAscii != 10) {
+			palavraAux[count] = palavra[i];
+			count++;
+		}
+	}
+	
+	strcpy(palavra, palavraAux);
+}
+
