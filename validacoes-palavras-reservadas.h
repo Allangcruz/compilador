@@ -21,7 +21,7 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
     Elem* no = *lista;
     int i, valorAscii, nuLinha, count = 0;
     char palavraAux[UCHAR_MAX], conteudoLinha[UCHAR_MAX], palavraAuxVariavel[UCHAR_MAX], tipoVariavel[UCHAR_MAX], tamanhoPalavra[UCHAR_MAX], auxTamanhoPalavra[UCHAR_MAX];
-    bool isVariavel = false, isPalavraReservada = false, isCondicaoParada = false, isLinhaComVariavel = false;
+    bool isVariavel = false, isPalavraReservada = false, isCondicaoParada = false, isLinhaComVariavel = false, isString = false;
     
     char valorTamanhoAllan[UCHAR_MAX], allan[UCHAR_MAX];
     
@@ -40,11 +40,12 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 			valorAscii = (int) conteudoLinha[i]; 
 			
 			// Verifica se a caracter ascii informado e uma condição de parada, para ser feita uma determinada analise.
-			// As condiçoes de parada sao os caracterers : \0, espaco, (, ), virgula, ponto e virgula
-			if ((valorAscii != 10) && (valorAscii != 32) && (valorAscii != 40) && (valorAscii != 41) && (valorAscii != 44) && (valorAscii != 59)) {
+			// As condiçoes de parada sao os caracterers : \0, espaco, (, ), virgula, ponto e virgula, #
+			if ((valorAscii != 10) && (valorAscii != 32) && (valorAscii != 40) && (valorAscii != 41) && (valorAscii != 44) && (valorAscii != 59) && (valorAscii != 35)) {
 				palavraAux[count] = (char) valorAscii;
 				count++;
 			} else {
+							
 				// TODO verificar se a variavel possui tamanho, caso sim, armazenar o tamanho
 				// Remover tambem as chaves do tamanho pois estão invalidas
 				isVariavel = validarDeclaracaoVariaveis(palavraAux);
@@ -80,11 +81,10 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 						limparLixoVetor(auxTamanhoPalavra);
 					}
 					
-					// TODO validar se a variavel ja foi declarada. 
+					// validar se a variavel ja foi declarada. 
 					if (validarVariavelDeclarada(palavraAux, tabelaSimbolos) == 0) {
 						error(nuLinha, 7, palavraAux);
 					}
-
 				}
 				
 				// TODO verificar se a linha é uma declaracao de variavel e se o ultimo caracter é ;
@@ -93,7 +93,13 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 				if (strlen(palavraAux) > 0) {
 					// compara se é uma variavel e se é uma palavra reservada
 					if (isVariavel == false && isPalavraReservada == false) {
-						error(nuLinha, 5, palavraAux);
+						
+						// TODO verifica se a palavra e uma string	
+						isString = validaPalavraString(palavraAux, nuLinha);
+						
+						if (! isString) {
+							error(nuLinha, 5, palavraAux);
+						}
 					}
 				}
 				
@@ -101,6 +107,13 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 				count=0;
 				isVariavel = 0;
 				isPalavraReservada = 0;
+				isString = 0;
+				
+				// como # faz parte da variavel e tambem é uma condição de parada, entao preciso incrementar aqui
+				if (valorAscii == 35) {
+					palavraAux[count] = (char) valorAscii;
+					count++;	
+				}
 			}
 		}
 		
@@ -108,6 +121,49 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 		isLinhaComVariavel = false;
 		limparLixoVetor(tipoVariavel);
     }
+}
+
+/**
+ * Verifica se a palavra informada e uma string valida, ou seja se a mesma esta dentro de ", " 
+ *
+ * @param char* palavra
+ * @param int nuLinha
+ */
+int validaPalavraString(char* palavra, int nuLinha) {
+	int isValido = 0, i, valorAscii, isDuploPalanceamentoValido = 0;
+	
+	for (i = 0; i < strlen(palavra); i++) {
+		valorAscii = (int) palavra[i];
+		
+		// verifica se existe um caracter de abertura
+		if (valorAscii == 34) {
+			isDuploPalanceamentoValido++;
+		}
+	}
+	
+	// verifica se é impar, caso seja o duplo balanceamento esta invalido.
+	if (isParImpar(isDuploPalanceamentoValido) == 0) {
+		error(nuLinha, 10, palavra);
+	} else {
+		isValido = 1;
+	}
+
+	return isValido;
+}
+
+/**
+ * Verifica se o valor informado e par ou impar. Retorna 1 - par, 0 - impar.
+ *
+ * @param int valor
+ */
+int isParImpar(int valor) {
+	int isValido = 0;
+	
+	if (valor % 2 == 0) {
+		isValido = 1;
+	}
+	
+	return isValido;
 }
 
 /**

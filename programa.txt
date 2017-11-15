@@ -1,10 +1,13 @@
 
+
+
+
 programa
 
-inteiro #numero, #teste, #i;
-caractere #nome[10], #email[];
+inteiro#numero,#teste,#i;
+caractere#nome[10],#email[2];
 
 leia(#numero, #nome);
-escreva(#teste, #nome);
+escreva(#teste, #nome, "allan");
 
 fim

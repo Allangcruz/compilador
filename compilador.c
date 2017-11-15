@@ -56,6 +56,6 @@ void main ()
 	
     printf("\n\n");
     system("pause");
-    // 1,2
+    // 1,2,3,4,5
 }
 

@@ -195,6 +195,7 @@ void imprimeTabelaSimbolo(TabelaSimbolo* lista) {
         printf("Palavra: %s \n", no->dados.palavra);
         printf("Tipo: %s \n", no->dados.tipo);
         printf("Tamanho: %s \n", no->dados.tamanho);
+        printf("Valor: %s \n", no->dados.valor);
         printf("------------------------------------------------\n");
         no = no->prox;
     }

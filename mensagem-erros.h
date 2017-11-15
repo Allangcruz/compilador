@@ -46,7 +46,11 @@ void error(int nuLinha, int tipoErro, char *palavra) {
 		
 		case 9:
 			printf("9 - Erro => Há ausência do caracter '[' ou ']', (%s). [linha - %d].\n", palavra, nuLinha);
-		break;	
+		break;
+		
+		case 10:
+			printf("10 - Erro => O '%c' precisa ter duplo balanceamento, (%s). [linha - %d].\n", (char) 34, palavra, nuLinha);
+		break;
 
 		
 		default:
