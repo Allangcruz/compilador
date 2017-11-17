@@ -54,14 +54,25 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 				if (! isVariavel) {
 					isPalavraReservada = validarPalavrasReservadas(palavraAux);
 					
+					// quando for palavra reservada posso tratar aqui, exemplo se for tipo de variavel posso guarda para validar depois
 					if (isPalavraReservada == true) {
-						// quando for palavra reservada posso tratar aqui, exemplo se for tipo de variavel posso guarda para validar depois
-						// caso se, senao, leia, escreva, para. preciso tratar cada um.
-						
+					
+						// caso seja: inteiro, caractere, real
 						if (isTipoVariavel(palavraAux) == 1) {
 							strcpy(tipoVariavel, palavraAux);
 							isLinhaComVariavel = true;
-						}	
+						}
+						
+						// TODO caso seja leia
+						
+						// TODO caso seja escreva
+						
+						// TODO caso seja se
+						
+						// TODO caso seja senao
+						
+						// TODO caso seja para
+						
 					}
 				} else {
 					if (isLinhaComVariavel == true) {
@@ -98,7 +109,7 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 					// compara se é uma variavel e se é uma palavra reservada
 					if (isVariavel == false && isPalavraReservada == false) {
 						
-						// TODO verifica se a palavra e uma string	
+						// verifica se a palavra e uma string	
 						isString = validaPalavraString(palavraAux, nuLinha);
 						
 						if (! isString) {
@@ -122,12 +133,15 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 			
 		} // fim for que percorre as colunas da linha
 		
+		// -------------------------------------------------------------------------------
+		// Essa validação de ; no final esta invalida criar uma nova
 		isPossuiPontoVirgula = validaDeclaracaoComPontoVirgula(conteudoLinha, nuLinha);
 		
 		// verifica se a linha possui declaração de variavel e tem ; nessa linha
 		if (isLinhaComVariavel == true && isPossuiPontoVirgula == false) {
-			error(nuLinha, 11, conteudoLinha);
+			//error(nuLinha, 11, conteudoLinha);
 		}
+		// -------------------------------------------------------------------------------
 
 		no = no->prox;
 		isLinhaComVariavel = false;
@@ -424,8 +438,10 @@ void validarAberturaFechamentoPrograma(Lista* lista) {
 		valorAscii = (int) inicio[i]; 
 		
 		if (valorAscii != 10) {
-			palavraAux[count] = (char) valorAscii;
-			count++;
+			if (valorAscii != 32) {
+				palavraAux[count] = (char) valorAscii;
+				count++;
+			}
 		} 
 	}
 

@@ -200,13 +200,6 @@ void imprimeTabelaSimbolo(TabelaSimbolo* lista) {
         no = no->prox;
     }
     
-    exibirConsumoMemoria();
-}
-
-/**
- * Exibe o tatal de memoria consumida pelo compilado.	
- */
-void exibirConsumoMemoria() {
-	printf("\nCONSUMO DE MEMORIA: %d ", TOTAL_CONSUMO_MEMORIA);
+    printf("\nCONSUMO DE MEMORIA: %d bytes", TOTAL_CONSUMO_MEMORIA);
 }
 

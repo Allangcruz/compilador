@@ -59,6 +59,10 @@ void error(int nuLinha, int tipoErro, char *palavra) {
 			printf("11 - Erro => A linha é uma declaração de variavel e a mesma deve conter ';' no final da linha (%s). [linha - %d].\n", palavra, nuLinha);
 		break;
 		
+		case 12:
+			printf("12 - Erro => A memória %d em bytes ultrapassou o %d em bytes de memória.\n", TOTAL_CONSUMO_MEMORIA, MAX_TOTAL_CONSUMO_MEMORIA);
+		break;
+		
 		default:
 			printf("Foi selecionando um tipo de erro não definido no case.\n");
 		break;
@@ -80,7 +84,6 @@ void removerQuebraLinha(char* palavra) {
 	for (i = 0; i < strlen(palavra); i++) {
 		valorAscii = (int) palavra[i]; 
 		
-		
 		if (valorAscii != 10) {
 			palavraAux[count] = palavra[i];
 			count++;
@@ -88,5 +91,26 @@ void removerQuebraLinha(char* palavra) {
 	}
 	
 	strcpy(palavra, palavraAux);
+}
+
+/**
+ * Conta a quantidade de memoria consumida, incrementado e subtraindo da constante TOTAL_CONSUMO_MEMORIA
+ *
+ * http://www.cprogressivo.net/2013/03/A-funcao-sizeof-e-blocos-vizinhos-de-memoria-em-C.html
+ *
+ * @param int memoria
+ * @param int situacao: 1 - incrementa, 2 - subtrai
+ */
+void memoriaConsumida(int memoria, int situacao) {
+	char a[1] = "a";
+	if (situacao == 1) {
+		TOTAL_CONSUMO_MEMORIA = TOTAL_CONSUMO_MEMORIA + memoria;	
+	} else {
+		TOTAL_CONSUMO_MEMORIA = TOTAL_CONSUMO_MEMORIA - memoria;
+	}
+	
+	if (TOTAL_CONSUMO_MEMORIA > MAX_TOTAL_CONSUMO_MEMORIA) {
+		error(0, 12, a);
+	}
 }
 

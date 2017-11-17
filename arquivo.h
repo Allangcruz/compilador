@@ -42,11 +42,18 @@ Lista* lerArquivo() {
 				item.linha = nuLinhas;
 				strcpy(item.conteudo, ch);
 				insereListaFinal(linhas, item);
+				
+				memoriaConsumida(sizeof(item), 1);
 			}
 						
 			nuLinhas ++;
 		}			
 	}
+	
+	memoriaConsumida(sizeof(url), 1);
+	memoriaConsumida(sizeof(linhas), 1);
+	memoriaConsumida(sizeof(ch), 1);
+	memoriaConsumida(sizeof(nuLinhas), 1);
 	
 	fclose(arquivo);
 	return linhas;

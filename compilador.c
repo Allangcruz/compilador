@@ -10,6 +10,15 @@ Elson Bento dos Santos
 #include <limits.h>
 #include <stdbool.h>
 #include <locale.h>
+#include <windows.h>
+
+/**
+ * Armazena o total de memoria utilizada no compilador.
+ */
+int TOTAL_CONSUMO_MEMORIA = 0;
+
+// 367001600 bytes => 350 megabytes | 
+int MAX_TOTAL_CONSUMO_MEMORIA = 367001600;
 
 /**
  * Constante com o total de palavras reservadas.
@@ -17,18 +26,10 @@ Elson Bento dos Santos
 #define NU_PALAVRA_RESERVADAS 10 
 #define NU_TIPO_VARIAVEL 4
 
-/**
- * Armazena o total de memoria utilizada no compilador.
-- Depois exibir ate a coluna que consta o erro.
-
-- Tratar palavras dentro de aspas
- */
-int TOTAL_CONSUMO_MEMORIA = 0;
-
+#include "mensagem-erros.h"
 #include "palavras-reservadas.h"
 #include "estrutura.h"
 #include "arquivo.h"
-#include "mensagem-erros.h"
 #include "tabela-simbolo.h"
 #include "validacoes-palavras-reservadas.h"
 
@@ -43,8 +44,12 @@ void main ()
     printf("ALLAN GONÇALVE DA CRUZ - ELSON BENTO DOS SANTOS\n");
     printf("================================================================\n");
 
+
     Lista* linhas;
-    TabelaSimbolo* tabelaSimbolos = criaListaTabelaSimbolo();
+	memoriaConsumida(sizeof(linhas), 1);
+    
+	TabelaSimbolo* tabelaSimbolos = criaListaTabelaSimbolo();
+    memoriaConsumida(sizeof(tabelaSimbolos), 1);
     
     linhas = lerArquivo();
 	analiseLexica(linhas, tabelaSimbolos);
@@ -56,6 +61,6 @@ void main ()
 	
     printf("\n\n");
     system("pause");
-    // 1,2,3
+    // 1
 }
 
