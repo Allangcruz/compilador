@@ -43,7 +43,9 @@ void main ()
 	printf("================================================================\n");
     printf("ALLAN GONÇALVE DA CRUZ - ELSON BENTO DOS SANTOS\n");
     printf("================================================================\n");
-
+    
+    memoriaConsumida(sizeof(palavrasReservadas), 1);
+    memoriaConsumida(sizeof(tiposVariaveis), 1);
 
     Lista* linhas;
 	memoriaConsumida(sizeof(linhas), 1);
@@ -61,6 +63,6 @@ void main ()
 	
     printf("\n\n");
     system("pause");
-    // 1
+    // 1,2,3,4
 }
 

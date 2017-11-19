@@ -13,6 +13,7 @@ char tiposVariaveis[NU_TIPO_VARIAVEL][10] = {"inteiro", "caractere", "real"};
  */
 void imprimirPalavrasReservadas() {
 	int i;
+	memoriaConsumida(sizeof(i), 1);
 	
 	for (i = 0; i < NU_PALAVRA_RESERVADAS; i++) {
 		printf("%iº => %s \n",i ,palavrasReservadas[i]);
@@ -24,6 +25,7 @@ void imprimirPalavrasReservadas() {
  */
 void imprimirTiposVariaveis() {
 	int i;
+	memoriaConsumida(sizeof(i), 1);
 	
 	for (i = 0; i < NU_TIPO_VARIAVEL; i++) {
 		printf("%iº => %s \n",i ,tiposVariaveis[i]);

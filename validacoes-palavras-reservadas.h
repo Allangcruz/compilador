@@ -109,11 +109,11 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 					// compara se é uma variavel e se é uma palavra reservada
 					if (isVariavel == false && isPalavraReservada == false) {
 						
+						error(nuLinha, 5, palavraAux);
 						// verifica se a palavra e uma string	
 						isString = validaPalavraString(palavraAux, nuLinha);
 						
 						if (! isString) {
-							error(nuLinha, 5, palavraAux);
 						}
 					}
 				}
