@@ -75,6 +75,10 @@ void error(int nuLinha, int tipoErro, char *palavra) {
 			printf("15 - Erro => Declaração incorreta de variavel (%s). [linha - %d].\n", palavra, nuLinha);
 		break;
 		
+		case 16:
+			printf("16 - Erro => Linha que possui comando 'leia' não pode ter declaração de variavel (%s). [linha - %d].\n", palavra, nuLinha);
+		break;
+		
 		default:
 			printf("Foi selecionando um tipo de erro não definido no case.\n");
 		break;

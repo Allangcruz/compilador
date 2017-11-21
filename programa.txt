@@ -3,7 +3,12 @@
 programa
 
 inteiro #numero,#i;
-real #dinheiro[10.];
+real #dinheiro[19.8], #dinheiro[1.0];
 caractere #teste[02];
 
+leia(#numero, #dinheiro, #teste);
+
+escreva( #dinheiro);
+
 fim
+

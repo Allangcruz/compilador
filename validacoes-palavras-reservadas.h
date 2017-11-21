@@ -21,7 +21,7 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
     Elem* no = *lista;
     int i, valorAscii, nuLinha, count = 0;
     char palavraAux[UCHAR_MAX], conteudoLinha[UCHAR_MAX], palavraAuxVariavel[UCHAR_MAX], tipoVariavel[UCHAR_MAX], tamanhoPalavra[UCHAR_MAX], auxTamanhoPalavra[UCHAR_MAX];
-    bool isVariavel = false, isPalavraReservada = false, isCondicaoParada = false, isLinhaComVariavel = false, isString = false, isPossuiPontoVirgula = false;
+    bool isVariavel = false, isPalavraReservada = false, isCondicaoParada = false, isLinhaComVariavel = false, isString = false, isPossuiPontoVirgula = false, isLeia = false;
     
 	limparLixoVetor(palavraAux);
     limparLixoVetor(tipoVariavel);
@@ -64,6 +64,12 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 						}
 						
 						// TODO caso seja leia
+						isLeia = validarPalavraLeia(palavraAux, nuLinha, conteudoLinha);
+						/*
+						if (isLinhaComVariavel == true && isLeia == true) {
+							error(nuLinha, 16, conteudoLinha);
+						}
+						*/
 						
 						// TODO caso seja escreva
 						
@@ -75,7 +81,7 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 						
 					}
 				} else {
-					if (isLinhaComVariavel == true) {
+					if (isLinhaComVariavel == true && isLeia == false) {
 						// validar se a variavel ja foi declarada. 
 						if (validarVariavelDeclarada(palavraAux, tabelaSimbolos) == 1) {
 							error(nuLinha, 13, palavraAux);
@@ -99,13 +105,12 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 						insereFinalTabelaSimbolo(tabelaSimbolos, novoSimbolo);
 						limparLixoVetor(auxTamanhoPalavra);
 					}
-					
+
 					// validar se a variavel ja foi declarada. 
 					if (validarVariavelDeclarada(palavraAux, tabelaSimbolos) == 0) {
 						error(nuLinha, 7, palavraAux);
 					}
-					
-					
+									
 					// TODO verifica se a variavel esta sendo redeclarada
 
 					// TODO Validar ponto e virgula no final da linha
@@ -123,6 +128,7 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 						isString = validaPalavraString(palavraAux, nuLinha);
 						
 						if (! isString) {
+							// error(nuLinha, 5, palavraAux);
 						}
 					}
 				}
@@ -148,7 +154,7 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 		
 		// verifica se a linha possui declaração de variavel e tem ; nessa linha
 		if (isLinhaComVariavel == true && isPossuiPontoVirgula == false) {
-			//error(nuLinha, 11, conteudoLinha);
+			error(nuLinha, 11, conteudoLinha);
 		}
 		// -------------------------------------------------------------------------------
 
@@ -156,8 +162,35 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 		isLinhaComVariavel = false;
 		limparLixoVetor(tipoVariavel);
 		isPossuiPontoVirgula = false;
+		isLeia = false;
     } // fim while que percorre as linhas
 
+}
+
+/**
+ * Verifica se a linha possui estrutura leia e verifica seus criterios.
+ *
+ * @param char* palavra
+ * @param int nuLinha
+ * @param int linha
+ */
+int validarPalavraLeia(char * palavra, int nuLinha, char * linha) {
+	int isValido = 0, i;
+	
+	// verifica se a palavra reservada é leia
+	if (strcmp(palavra, palavrasReservadas[1]) == 0) {
+		
+		isValido = 1;
+		// TODO verificar duplo balanceamento de "()"
+		// TODO verificar ";" no final da linha
+		// nao pode haver declarações dentro da estrutura
+		// 
+		for (i = 0; i < strlen(linha); i++) {
+			
+		}
+	}
+		
+	return isValido;
 }
 
 /**
