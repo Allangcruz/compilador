@@ -50,9 +50,10 @@ Lista* lerArquivo() {
 		}			
 	}
 	
+	memoriaConsumida(sizeof(ch), 1);
 	memoriaConsumida(sizeof(url), 1);
 	memoriaConsumida(sizeof(linhas), 1);
-	memoriaConsumida(sizeof(ch), 1);
+	memoriaConsumida(sizeof(arquivo), 1);
 	memoriaConsumida(sizeof(nuLinhas), 1);
 	
 	fclose(arquivo);
