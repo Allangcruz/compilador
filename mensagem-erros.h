@@ -71,6 +71,10 @@ void error(int nuLinha, int tipoErro, char *palavra) {
 			printf("14 - Erro => A declaração de variaveis do tipo inteiro, não requer tamanho (%s). [linha - %d].\n", palavra, nuLinha);
 		break;
 		
+		case 15:
+			printf("15 - Erro => Declaração incorreta de variavel (%s). [linha - %d].\n", palavra, nuLinha);
+		break;
+		
 		default:
 			printf("Foi selecionando um tipo de erro não definido no case.\n");
 		break;

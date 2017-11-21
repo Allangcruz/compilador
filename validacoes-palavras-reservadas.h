@@ -169,30 +169,116 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
  */
 void verificarPresencaColchetes(char* palavra, char* tipoVariavel, int nuLinha) {
 	int i, valorAscii;
-	
-	// se o tipo informado nao for caractere e real
-	if ( (strcmp(tipoVariavel, tiposVariaveis[1]) == 0) || (strcmp(tipoVariavel, tiposVariaveis[2]) == 0)) {
 		
-		// TODO tratar quando for caractere
-		if (strcmp(tipoVariavel, tiposVariaveis[1]) == 0) {
-			
-		}
-		
-		// TODO tratar quando for real
-		if (strcmp(tipoVariavel, tiposVariaveis[2]) == 0) {
-			
-		}
-		
-		
-	} else {
+	if (strcmp(tipoVariavel, tiposVariaveis[0]) == 0) {
 		for (i = 0; i < strlen(palavra); i++) {
 			valorAscii = (int) palavra[i];
+
 			// se na declaração possui [ ou ] 
 			if (valorAscii == 91 || valorAscii == 93) {
 				error(nuLinha, 14, palavra);
 			}
 		}
+	}
+	
+	
+	// TODO tratar quando for caractere
+	if (strcmp(tipoVariavel, tiposVariaveis[1]) == 0) {
+		validarTipoCaractere(palavra, nuLinha);
+	}
+	
+	// TODO tratar quando for real
+	if (strcmp(tipoVariavel, tiposVariaveis[2]) == 0) {
+		validarTipoReal(palavra, nuLinha);
+	}
+}
+
+/**
+ * Valida o tipo de dados do caractere
+ */
+void validarTipoCaractere(char * palavra, int nuLinha) {
+	int i, tamanhoPalavra = strlen(palavra) - 1, valorAscii, count = 0, countValorEntreConchete = 0;
+	char auxValorTamanho[UCHAR_MAX];
+	int isFecharColchete = 0;
+	int isAberturaColchete = 0;
+
+	limparLixoVetor(auxValorTamanho);
+	
+	// percorre a palavra de traz para frente
+	for (i = tamanhoPalavra; i >= 0; i--) {
+		valorAscii = palavra[i];
+
+		// verifica se o ultimo caracter é um ], caso seja vai percorrendo para salvar o tamanho
+		if (i == tamanhoPalavra && valorAscii == 93) {
+			isFecharColchete++;
+			continue;
+			// condição que ira acumular enquanto for numero e nao encontrar [.
+		} else if(valorAscii >= 48 && valorAscii <= 57) { 
+			auxValorTamanho[count] = palavra[i];
+			countValorEntreConchete++;
+			
+			count++;
+		} else if (valorAscii == 91) {
+			isAberturaColchete++;
+		}
+	}
+	
+	// TODO Validar valores acima ou iguais a zero.
+	
+	if (isFecharColchete == 0 || isAberturaColchete == 0 || countValorEntreConchete == 0) {
+		printf("\n[TIPO CARACTERE]\n");
+		error(nuLinha, 15, palavra);
+	}
+}
+
+/**
+ * Valida o tipo de dados real
+ */
+void validarTipoReal(char * palavra, int nuLinha) {
+	int i, tamanhoPalavra = strlen(palavra) - 1, valorAscii, count = 0, countValorEntreConchete = 0;
+	char auxValorTamanho[UCHAR_MAX];
+	int isFecharColchete = 0;
+	int isAberturaColchete = 0;
+	int countTotalPonto = 0;
+
+	limparLixoVetor(auxValorTamanho);
+	// percorre a palavra de traz para frente
+	for (i = tamanhoPalavra; i >= 0; i--) {
+		valorAscii = palavra[i];
+
+		// verifica se o ultimo caracter é um ], caso seja vai percorrendo para salvar o tamanho
+		if (i == tamanhoPalavra && valorAscii == 93) {
+			isFecharColchete++;
+			continue;
+			// condição que ira acumular enquanto for 0-9 e que o mesmo tenha .
+		} else if((valorAscii >= 48 && valorAscii <= 57) || valorAscii == 46) { 
+			auxValorTamanho[count] = palavra[i];
+			countValorEntreConchete++;
+			
+			count++;
+		} else if (valorAscii == 91) {
+			isAberturaColchete++;
+		}
+	}
+	
+	// TODO Validar valores acima ou iguais a zero, tratar depois
+	
+	if (isFecharColchete == 0 || isAberturaColchete == 0 || countValorEntreConchete == 0) {
+		printf("\n[TIPO REAL]\n");
+		error(nuLinha, 15, palavra);
+	}
+	
+	for (i = 0; i < strlen(auxValorTamanho); i++) {
+		valorAscii = auxValorTamanho[i];
 		
+		if (valorAscii == 46) {
+			countTotalPonto++;
+		}
+	}
+	
+	if (countTotalPonto != 1) {
+		printf("\n[TIPO REAL]\n");
+		error(nuLinha, 15, palavra);
 	}
 }
 
@@ -317,19 +403,22 @@ int validarDeclaracaoVariaveis(char *palavra, int nuLinha) {
 	int isValido = 0, i, valorAscii;
 	
 	if ((int) palavra[0] == 35) {
+		// apenas a-z
 		if ((int) palavra[1] >= 97 &&  (int) palavra[1] <= 122) {
 			isValido = 1;
 		} else {
 			isValido = 0;
+			printf("\n[Declaração variavel]\n");
 			error(nuLinha, 6, palavra);
 		}
 		
 		for (i = 2; i < strlen(palavra); i++) {
 			valorAscii = (int) palavra[i];
 			
-			// permiter apenas a-z, 0-9, A-Z, [, ]
-			if (! ((valorAscii >= 97 && valorAscii <= 122) || (valorAscii >= 48 && valorAscii <= 57) || (valorAscii >= 65 && valorAscii <= 90) || valorAscii == 91 || valorAscii == 93)) {
+			// permiter apenas a-z, 0-9, A-Z, [, ], .
+			if (! ((valorAscii >= 97 && valorAscii <= 122) || (valorAscii >= 48 && valorAscii <= 57) || (valorAscii >= 65 && valorAscii <= 90) || valorAscii == 91 || valorAscii == 93 || valorAscii == 46)) {
 				isValido = 0;
+				printf("\n[Declaração variavel]\n");
 				error(nuLinha, 6, palavra);
 			}
 		}

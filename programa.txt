@@ -3,6 +3,7 @@
 programa
 
 inteiro #numero,#i;
-real #teste[10];
+real #dinheiro[10.];
+caractere #teste[02];
 
 fim
