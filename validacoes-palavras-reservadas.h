@@ -13,7 +13,7 @@ Elson Bento dos Santos
  */
 void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 	validarAberturaFechamentoPrograma(lista);
-
+	
 	if (lista == NULL) {
         exit(1);
     }
@@ -42,8 +42,8 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 			}
 			
 			// Verifica se a caracter ascii informado e uma condição de parada, para ser feita uma determinada analise.
-			// As condiçoes de parada sao os caracterers : \0, espaco, (, ), virgula, ponto virgula, #
-			if ((valorAscii != 10) && (valorAscii != 32) && (valorAscii != 40) && (valorAscii != 41) && (valorAscii != 44) && (valorAscii != 59) && (valorAscii != 35)) {
+			// As condiçoes de parada sao os caracterers : \0, espaco, (, ), virgula, ponto virgula, #, tabs
+			if ((valorAscii != 10) && (valorAscii != 32) && (valorAscii != 40) && (valorAscii != 41) && (valorAscii != 44) && (valorAscii != 59) && (valorAscii != 35) && (valorAscii != 9)) {
 				palavraAux[count] = (char) valorAscii;
 				count++;
 			} else {
@@ -76,6 +76,14 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 					}
 				} else {
 					if (isLinhaComVariavel == true) {
+						// validar se a variavel ja foi declarada. 
+						if (validarVariavelDeclarada(palavraAux, tabelaSimbolos) == 1) {
+							error(nuLinha, 13, palavraAux);
+						}
+						
+						// verificar se tipo inteiro esta declarado com [, ]
+						verificarPresencaColchetes(palavraAux, tipoVariavel, nuLinha);
+
 						// salva a variavel valida
 	    				Simbolo novoSimbolo;
 	    				
@@ -97,8 +105,9 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 						error(nuLinha, 7, palavraAux);
 					}
 					
-					// TODO verifica se a variavel esta sendo redeclarada
 					
+					// TODO verifica se a variavel esta sendo redeclarada
+
 					// TODO Validar ponto e virgula no final da linha
 				}
 				
@@ -148,6 +157,43 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 		limparLixoVetor(tipoVariavel);
 		isPossuiPontoVirgula = false;
     } // fim while que percorre as linhas
+
+}
+
+/**
+ * Verifica se a linha possui ; no final
+ *
+ * @param char* palavra
+ * @param char* tipoVariavel
+ * @param int nuLinha
+ */
+void verificarPresencaColchetes(char* palavra, char* tipoVariavel, int nuLinha) {
+	int i, valorAscii;
+	
+	// se o tipo informado nao for caractere e real
+	if ( (strcmp(tipoVariavel, tiposVariaveis[1]) == 0) || (strcmp(tipoVariavel, tiposVariaveis[2]) == 0)) {
+		
+		// TODO tratar quando for caractere
+		if (strcmp(tipoVariavel, tiposVariaveis[1]) == 0) {
+			
+		}
+		
+		// TODO tratar quando for real
+		if (strcmp(tipoVariavel, tiposVariaveis[2]) == 0) {
+			
+		}
+		
+		
+	} else {
+		for (i = 0; i < strlen(palavra); i++) {
+			valorAscii = (int) palavra[i];
+			// se na declaração possui [ ou ] 
+			if (valorAscii == 91 || valorAscii == 93) {
+				error(nuLinha, 14, palavra);
+			}
+		}
+		
+	}
 }
 
 /**
@@ -218,7 +264,7 @@ int isParImpar(int valor) {
 }
 
 /**
- * Valida se a variavel já foi declarada.
+ * Valida se a variavel informada ja esta declarada na tabela de simbolos
  *
  * @param char * palavra
  */
@@ -437,8 +483,11 @@ void validarAberturaFechamentoPrograma(Lista* lista) {
     for (i = 0; i < strlen(inicio); i++) {
 		valorAscii = (int) inicio[i]; 
 		
+		// \0, quebra de linha
 		if (valorAscii != 10) {
-			if (valorAscii != 32) {
+			
+			// apenas se nao for espaço e tabs
+			if (valorAscii != 32 && valorAscii != 9) {
 				palavraAux[count] = (char) valorAscii;
 				count++;
 			}
@@ -464,9 +513,14 @@ void validarAberturaFechamentoPrograma(Lista* lista) {
     for (i = 0; i < strlen(inicio); i++) {
 		valorAscii = (int) final[i]; 
 		
+		// \0, quebra de linha
 		if (valorAscii != 10) {
-			palavraAux[count] = (char) valorAscii;
-			count++;
+			
+			// apenas se nao for espaço e tabs
+			if (valorAscii != 32 && valorAscii != 9) {
+				palavraAux[count] = (char) valorAscii;
+				count++;
+			}
 		}
 	}
 

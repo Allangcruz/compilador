@@ -2,17 +2,7 @@
 
 programa
 
-caractere #nome[10],#email[2];
-inteiro #numero,#teste,#i[10];
-
-
-leia(#numero, #nome);
-escreva(#teste, #nome);
-
-leia(#numero, #nome);
-escreva(#teste, #nome);
-
-leia(#numero, #nome);
-escreva(#teste, #nome);
+inteiro #numero,#i;
+real #teste[10];
 
 fim

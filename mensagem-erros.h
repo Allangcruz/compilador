@@ -40,7 +40,7 @@ void error(int nuLinha, int tipoErro, char *palavra) {
 		break;
 		
 		case 7:
-			printf("7 - Erro => A variavel (%s) não está declara. [linha - %d].\n", palavra, nuLinha);
+			printf("7 - Erro => A variavel (%s) não foi declarada porque precisa de tipo. [linha - %d].\n", palavra, nuLinha);
 		break;	
 		
 		case 8:
@@ -60,7 +60,15 @@ void error(int nuLinha, int tipoErro, char *palavra) {
 		break;
 		
 		case 12:
-			printf("12 - Erro => A memória %d em bytes ultrapassou o %d em bytes de memória.\n", TOTAL_CONSUMO_MEMORIA, MAX_TOTAL_CONSUMO_MEMORIA);
+			printf("12 - Erro => A memória usada foi de %d bytes, ultrapassando o limite de %d bytes de memória.\n", TOTAL_CONSUMO_MEMORIA, MAX_TOTAL_CONSUMO_MEMORIA);
+		break;
+		
+		case 13:
+			printf("13 - Erro => Uma variavel com o nome (%s) já foi declarada. [linha - %d].\n", palavra, nuLinha);
+		break;
+		
+		case 14:
+			printf("14 - Erro => A declaração de variaveis do tipo inteiro, não requer tamanho (%s). [linha - %d].\n", palavra, nuLinha);
 		break;
 		
 		default:
