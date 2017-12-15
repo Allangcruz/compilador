@@ -20,8 +20,22 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
     
     Elem* no = *lista;
     int i, valorAscii, nuLinha, count = 0;
-    char palavraAux[UCHAR_MAX], conteudoLinha[UCHAR_MAX], palavraAuxVariavel[UCHAR_MAX], tipoVariavel[UCHAR_MAX], tamanhoPalavra[UCHAR_MAX], auxTamanhoPalavra[UCHAR_MAX];
-    bool isVariavel = false, isPalavraReservada = false, isCondicaoParada = false, isLinhaComVariavel = false, isString = false, isPossuiPontoVirgula = false, isLeia = false;
+
+    char palavraAux[UCHAR_MAX],
+		 conteudoLinha[UCHAR_MAX], 
+		 palavraAuxVariavel[UCHAR_MAX], 
+		 tipoVariavel[UCHAR_MAX], 
+		 tamanhoPalavra[UCHAR_MAX], 
+		 auxTamanhoPalavra[UCHAR_MAX];
+		 
+
+    bool isVariavel = false,
+		 isPalavraReservada = false, 
+		 isCondicaoParada = false, 
+		 isLinhaComVariavel = false,
+		 isString = false, 
+		 isPossuiPontoVirgula = false, 
+		 isLeia = false;
     
 	limparLixoVetor(palavraAux);
     limparLixoVetor(tipoVariavel);
@@ -37,7 +51,7 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 		for (i = 0; i < strlen(conteudoLinha); i++) {
 			valorAscii = (int) conteudoLinha[i]; 
 			
-			if (valorAscii ==59) {
+			if (valorAscii == 59) {
 				isPossuiPontoVirgula = true;
 			}
 			
@@ -47,7 +61,7 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 				palavraAux[count] = (char) valorAscii;
 				count++;
 			} else {
-							
+										
 				isVariavel = validarDeclaracaoVariaveis(palavraAux);
 				
 				// verifica se não e uma variavel, se ele nao variavel, verificar se é palavra reservada
@@ -65,6 +79,13 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 						
 						// TODO caso seja leia
 						isLeia = validarPalavraLeia(palavraAux, nuLinha, conteudoLinha);
+						if (isLeia) {
+							//printf("entrou no if do leia.");						
+							// passa para proxima linha
+							// e resetar todas as variaveis e propriedade utilizadas em validacoes
+						}
+						
+						//printf("\n%d - %s", isLeia, palavraAux);
 						/*
 						if (isLinhaComVariavel == true && isLeia == true) {
 							error(nuLinha, 16, conteudoLinha);
@@ -157,14 +178,13 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 			error(nuLinha, 11, conteudoLinha);
 		}
 		// -------------------------------------------------------------------------------
-
+		// talvez criar uma funcao que sempre reset essa itens
 		no = no->prox;
 		isLinhaComVariavel = false;
 		limparLixoVetor(tipoVariavel);
 		isPossuiPontoVirgula = false;
 		isLeia = false;
     } // fim while que percorre as linhas
-
 }
 
 /**
@@ -175,18 +195,61 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
  * @param int linha
  */
 int validarPalavraLeia(char * palavra, int nuLinha, char * linha) {
-	int isValido = 0, i;
+	int isValido = 0, i, parenteses = 0, valorAscii, isPossuiPontoVirgula = 0;
 	
 	// verifica se a palavra reservada é leia
 	if (strcmp(palavra, palavrasReservadas[1]) == 0) {
 		
 		isValido = 1;
-		// TODO verificar duplo balanceamento de "()"
-		// TODO verificar ";" no final da linha
 		// nao pode haver declarações dentro da estrutura
-		// 
 		for (i = 0; i < strlen(linha); i++) {
+			valorAscii = (int) linha[i]; 
 			
+			// cada caractere tem que ser diferente de \0, espaco e tab
+			if ((valorAscii != 10) && (valorAscii != 32) && (valorAscii != 9)) {
+				// balanceamento de parenteses '('
+				if (valorAscii == 40) {
+					parenteses ++;
+				}
+				
+				// balanceamento de parenteses ')'
+				if (valorAscii == 41) {
+					parenteses --;
+				}
+			}
+		}
+		
+		// verifica se a linha do leia possui ';'
+		for (i = strlen(linha); i > 0; i--) {
+			valorAscii = (int) linha[i]; 
+			
+			// cada caractere tem que ser diferente de \0, espaco e tab
+			if ((valorAscii != 10) && (valorAscii != 32) && (valorAscii != 9)) {
+				
+				// verifica se o caracter é ';'
+				if (valorAscii == 59 && isPossuiPontoVirgula == 0) {
+					isPossuiPontoVirgula ++;
+				}
+				
+				// verifica se o caracter é ')'
+				if (valorAscii == 41 && isPossuiPontoVirgula == 1) {
+					isPossuiPontoVirgula ++;
+				}
+			}
+			
+			if (isPossuiPontoVirgula == 2) {
+				break;
+			}
+		}
+		
+		// verifica se existe duplo balanceamento de parentes
+		if (parenteses != 0) {
+			error(nuLinha, 17, linha);
+		}
+		
+		// verificar o ; no final da linha do leia
+		if (isPossuiPontoVirgula != 2) {
+			error(nuLinha, 18, linha);
 		}
 	}
 		

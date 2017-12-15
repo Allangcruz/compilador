@@ -2,11 +2,8 @@
 
 programa
 
-inteiro #numero,#i;
-real #dinheiro[19.8], #dinheiro[1.0];
-caractere #teste[02];
-
-leia(#numero, #dinheiro, #teste);
+inteiro #numero, #dinheiro;
+leia ();
 
 escreva( #dinheiro);
 

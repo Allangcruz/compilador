@@ -79,6 +79,14 @@ void error(int nuLinha, int tipoErro, char *palavra) {
 			printf("16 - Erro => Linha que possui comando 'leia' não pode ter declaração de variavel (%s). [linha - %d].\n", palavra, nuLinha);
 		break;
 		
+		case 17:
+			printf("17 - Erro => Há ausência do caracter '(' ou ')', (%s). [linha - %d].\n", palavra, nuLinha);
+		break;
+		
+		case 18:
+			printf("18 - Erro => A linha não finalizou com ';' em (%s), favor verificar. [linha - %d].\n", palavra, nuLinha);
+		break;
+		
 		default:
 			printf("Foi selecionando um tipo de erro não definido no case.\n");
 		break;
