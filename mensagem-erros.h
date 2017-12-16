@@ -87,6 +87,10 @@ void error(int nuLinha, int tipoErro, char *palavra) {
 			printf("18 - Erro => A linha não finalizou com ';' em (%s), favor verificar. [linha - %d].\n", palavra, nuLinha);
 		break;
 		
+		case 19:
+			printf("19 - Erro => A declaração da palavra reservada 'leia' esta incorreta, (%s), favor verificar. [linha - %d].\n", palavra, nuLinha);
+		break;
+		
 		default:
 			printf("Foi selecionando um tipo de erro não definido no case.\n");
 		break;

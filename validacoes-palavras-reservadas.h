@@ -62,7 +62,7 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 				count++;
 			} else {
 										
-				isVariavel = validarDeclaracaoVariaveis(palavraAux);
+				isVariavel = validarDeclaracaoVariaveis(palavraAux, nuLinha);
 				
 				// verifica se não e uma variavel, se ele nao variavel, verificar se é palavra reservada
 				if (! isVariavel) {
@@ -195,12 +195,39 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
  * @param int linha
  */
 int validarPalavraLeia(char * palavra, int nuLinha, char * linha) {
-	int isValido = 0, i, parenteses = 0, valorAscii, isPossuiPontoVirgula = 0;
+	int isValido = 0, i , count = 0, parenteses = 0, valorAscii, isPossuiPontoVirgula = 0, 
+		isLeiaValido = 0; // verifica se a palavra leia esta no padrao 'leia('
+	
+	char palavraAux[UCHAR_MAX];
+	limparLixoVetor(palavraAux);
 	
 	// verifica se a palavra reservada é leia
 	if (strcmp(palavra, palavrasReservadas[1]) == 0) {
 		
+		// identifica se a palavra reservada é 'leia'
 		isValido = 1;
+		
+		// valida se apos a palavra 'leia' possui obrigatoriamente um '(' e uma variavel.
+		for (i = 0; i < strlen(linha); i++) {
+			valorAscii = (int) linha[i];
+			
+			// Verifica se a caracter ascii informado e uma condição de parada, para ser feita uma determinada analise.
+			// As condiçoes de parada sao os caracterers : \0, espaco, ), virgula, ponto virgula, #, tabs
+			if ((valorAscii != 10) && (valorAscii != 32) && (valorAscii != 41) && (valorAscii != 44) && (valorAscii != 59) && (valorAscii != 9)) {
+				palavraAux[count] = (char) valorAscii;
+				count++;
+				
+				if (strcmp(palavraAux, "leia(#") == 0) {
+					isLeiaValido++;
+					break;
+				}
+			}
+		}
+		
+		if (isLeiaValido == 0) {
+			error(nuLinha, 19, linha);
+		}
+		
 		// nao pode haver declarações dentro da estrutura
 		for (i = 0; i < strlen(linha); i++) {
 			valorAscii = (int) linha[i]; 
@@ -229,16 +256,8 @@ int validarPalavraLeia(char * palavra, int nuLinha, char * linha) {
 				// verifica se o caracter é ';'
 				if (valorAscii == 59 && isPossuiPontoVirgula == 0) {
 					isPossuiPontoVirgula ++;
+					break;
 				}
-				
-				// verifica se o caracter é ')'
-				if (valorAscii == 41 && isPossuiPontoVirgula == 1) {
-					isPossuiPontoVirgula ++;
-				}
-			}
-			
-			if (isPossuiPontoVirgula == 2) {
-				break;
 			}
 		}
 		
@@ -248,7 +267,7 @@ int validarPalavraLeia(char * palavra, int nuLinha, char * linha) {
 		}
 		
 		// verificar o ; no final da linha do leia
-		if (isPossuiPontoVirgula != 2) {
+		if (isPossuiPontoVirgula != 1) {
 			error(nuLinha, 18, linha);
 		}
 	}
