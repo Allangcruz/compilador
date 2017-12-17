@@ -1,7 +1,9 @@
 programa
 inteiro #numero, #dinheiro;
 
-leia(#numero #dinheiro);
+leia(#numero, #dinheiro);
+
+escreva(#numero);
 
 fim
 

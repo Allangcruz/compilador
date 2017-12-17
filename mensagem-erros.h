@@ -95,6 +95,10 @@ void error(int nuLinha, int tipoErro, char *palavra) {
 			printf("20 - Erro => As variavies devem ser separadas por ',' em (%s). [linha - %d].\n", palavra, nuLinha);
 		break;
 		
+		case 21:
+			printf("21 - Erro => A declaração da palavra reservada 'escreva' esta incorreta, (%s), favor verificar. [linha - %d].\n", palavra, nuLinha);
+		break;
+		
 		default:
 			printf("Foi selecionando um tipo de erro não definido no case.\n");
 		break;

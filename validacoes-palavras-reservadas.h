@@ -19,7 +19,7 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
     }
     
     Elem* no = *lista;
-    int i, valorAscii, valorAsciiProximo, nuLinha, count = 0, countVariaveis = 0, countVirgulas = 0;
+    int i, valorAscii, nuLinha, count = 0, countVariaveis = 0, countVirgulas = 0;
 
     char palavraAux[UCHAR_MAX],
 		 conteudoLinha[UCHAR_MAX], 
@@ -35,7 +35,8 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 		 isLinhaComVariavel = false, // verifica se a linha é uma declaração de variavel
 		 isString = false, 
 		 isPossuiPontoVirgula = false, 
-		 isLeia = false;
+		 isLeia = false,
+		 isEscreva = false;
     
 	limparLixoVetor(palavraAux);
     limparLixoVetor(tipoVariavel);
@@ -86,7 +87,8 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 						// caso seja leia
 						isLeia = validarPalavraLeia(palavraAux, nuLinha, conteudoLinha);
 											
-						// TODO caso seja escreva
+						// caso seja escreva
+						isEscreva = validarPalavraEscreva(palavraAux, nuLinha, conteudoLinha);
 						
 						// TODO caso seja se
 						
@@ -132,23 +134,6 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 					// TODO Validar ponto e virgula no final da linha
 				}
 				
-				if (isVariavel == true || isLeia == true) {
-					//printf("(%d) - [%c] | [%d]\n", nuLinha, (char) valorAscii, valorAscii);
-
-					// valida variaveis separada por virgula
-					if (valorAscii == 32) {
-						// recupera o proximo valor
-						valorAsciiProximo = (int) conteudoLinha[i + 1]; 
-						printf("(%d) - (%d)\n", valorAsciiProximo, valorAscii);
-						
-						// apos uma variavel o proximo valor for outra variavel 
-						// que nao seja separada por ','
-						if (valorAsciiProximo == 35) {
-							//printf("[%d] - '%s' - %d - %d - %d\n", nuLinha, palavraAux, isLinhaComVariavel, isVariavel, valorAscii);
-						}
-					}
-				}
-				
 				// TODO verificar se a linha é uma declaracao de variavel e se o ultimo caracter é ;
 				
 				// por causa que quando e encontrado 2 ou mais criterio de paradas seguidos ele estava comparando com a palavra vazia, e isso nao pode acontecer
@@ -190,6 +175,7 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 			error(nuLinha, 11, conteudoLinha);
 		}
 		
+		// caso tenha mais de 1 variavel a quantidade de virgulas serão 'countVirgulas' - 'countVariaveis' - 1)
 		if (countVariaveis > 1) {
 			if (countVirgulas != (countVariaveis - 1)) {
 				error(nuLinha, 20, conteudoLinha);	
@@ -209,14 +195,111 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 }
 
 /**
- * Verifica se a linha possui estrutura leia e verifica seus criterios.
+ * Verifica se a linha possui estrutura 'escreva' e verifica seus criterios.
+ *
+ * @param char* palavra
+ * @param int nuLinha
+ * @param int linha
+ */
+int validarPalavraEscreva(char * palavra, int nuLinha, char * linha) {
+	int isValido = 0, 
+		i , 
+		count = 0, 
+		parenteses = 0, 
+		valorAscii, 
+		isPossuiPontoVirgula = 0, 
+		isEscrevaValido = 0; // verifica se a palavra escreva esta no padrao 'escreva(#' ou 'escreva("'
+	
+	char palavraAux[UCHAR_MAX];
+	limparLixoVetor(palavraAux);
+	
+	// verifica se a palavra reservada é escreva
+	if (strcmp(palavra, palavrasReservadas[2]) == 0) {
+		
+		// identifica se a palavra reservada é 'escreva'
+		isValido = 1;
+		
+		// valida se apos a palavra 'escreva' possui obrigatoriamente um '(' e uma variavel.
+		for (i = 0; i < strlen(linha); i++) {
+			valorAscii = (int) linha[i];
+			
+			// Verifica se a caracter ascii informado e uma condição de parada, para ser feita uma determinada analise.
+			// As condiçoes de parada sao os caracterers : \0, espaco, ), virgula, ponto virgula, #, tabs
+			if ((valorAscii != 10) && (valorAscii != 32) && (valorAscii != 41) && (valorAscii != 44) && (valorAscii != 59) && (valorAscii != 9)) {
+				palavraAux[count] = (char) valorAscii;
+				count++;
+				
+				if (strcmp(palavraAux, "escreva(#") == 0) {
+					isEscrevaValido++;
+					break;
+				}
+			}
+		}
+		if (isEscrevaValido == 0) {
+			error(nuLinha, 21, linha);
+		}
+		
+		// nao pode haver declarações dentro da estrutura
+		for (i = 0; i < strlen(linha); i++) {
+			valorAscii = (int) linha[i]; 
+			
+			// cada caractere tem que ser diferente de \0, espaco e tab
+			if ((valorAscii != 10) && (valorAscii != 32) && (valorAscii != 9)) {
+				// balanceamento de parenteses '('
+				if (valorAscii == 40) {
+					parenteses ++;
+				}
+				
+				// balanceamento de parenteses ')'
+				if (valorAscii == 41) {
+					parenteses --;
+				}
+			}
+		}
+		
+		// verifica se a linha do leia possui ';'
+		for (i = strlen(linha); i > 0; i--) {
+			valorAscii = (int) linha[i]; 
+			
+			// cada caractere tem que ser diferente de \0, espaco e tab
+			if ((valorAscii != 10) && (valorAscii != 32) && (valorAscii != 9)) {
+				
+				// verifica se o caracter é ';'
+				if (valorAscii == 59 && isPossuiPontoVirgula == 0) {
+					isPossuiPontoVirgula ++;
+					break;
+				}
+			}
+		}
+		
+		// verifica se existe duplo balanceamento de parentes
+		if (parenteses != 0) {
+			error(nuLinha, 17, linha);
+		}
+
+		// verificar o ; no final da linha do leia
+		if (isPossuiPontoVirgula != 1) {
+			error(nuLinha, 18, linha);
+		}
+	}
+		
+	return isValido;
+}
+
+/**
+ * Verifica se a linha possui estrutura 'leia' e verifica seus criterios.
  *
  * @param char* palavra
  * @param int nuLinha
  * @param int linha
  */
 int validarPalavraLeia(char * palavra, int nuLinha, char * linha) {
-	int isValido = 0, i , count = 0, parenteses = 0, valorAscii, isPossuiPontoVirgula = 0, 
+	int isValido = 0, 
+		i , 
+		count = 0, 
+		parenteses = 0, 
+		valorAscii, 
+		isPossuiPontoVirgula = 0, 
 		isLeiaValido = 0; // verifica se a palavra leia esta no padrao 'leia('
 	
 	char palavraAux[UCHAR_MAX];
@@ -676,12 +759,6 @@ void limparLixoVetor(char vetor[]) {
 		vetor[i] = '\0';
 		i ++;
 	}
-}
-
-/**
- * Valida palavras duplo balanceamento
- */
-void validarDuploBalanceamento() {	
 }
 
 /**
