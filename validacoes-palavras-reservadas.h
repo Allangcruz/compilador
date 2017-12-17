@@ -19,7 +19,14 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
     }
     
     Elem* no = *lista;
-    int i, valorAscii, nuLinha, count = 0, countVariaveis = 0, countVirgulas = 0;
+
+    int i, 
+		valorAscii, 
+		nuLinha, 
+		count = 0, 
+		countVariaveis = 0,
+		countVirgulas = 0, 
+		countAspas = 0;
 
     char palavraAux[UCHAR_MAX],
 		 conteudoLinha[UCHAR_MAX], 
@@ -36,7 +43,8 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 		 isString = false, 
 		 isPossuiPontoVirgula = false, 
 		 isLeia = false,
-		 isEscreva = false;
+		 isEscreva = false,
+		 isAspasValida = false;
     
 	limparLixoVetor(palavraAux);
     limparLixoVetor(tipoVariavel);
@@ -52,9 +60,18 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 		for (i = 0; i < strlen(conteudoLinha); i++) {
 			valorAscii = (int) conteudoLinha[i]; 
 			
+			// verifica se existe ';'
 			if (valorAscii == 59) {
 				isPossuiPontoVirgula = true;
 			}
+			
+			// verifica se é '"'
+			if (valorAscii == 34) {
+				countAspas++;
+			}
+			
+			
+
 			
 			// Verifica se a caracter ascii informado e uma condição de parada, para ser feita uma determinada analise.
 			// As condiçoes de parada sao os caracterers : \0, espaco, (, ), virgula, ponto virgula, #, tabs
@@ -130,25 +147,38 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 					if (validarVariavelDeclarada(palavraAux, tabelaSimbolos) == 0) {
 						error(nuLinha, 7, palavraAux);
 					}
-									
-					// TODO Validar ponto e virgula no final da linha
 				}
 				
-				// TODO verificar se a linha é uma declaracao de variavel e se o ultimo caracter é ;
-				
-				// por causa que quando e encontrado 2 ou mais criterio de paradas seguidos ele estava comparando com a palavra vazia, e isso nao pode acontecer
 				if (strlen(palavraAux) > 0) {
-					// compara se é uma variavel e se é uma palavra reservada
-					if (isVariavel == false && isPalavraReservada == false) {
-						
-						error(nuLinha, 5, palavraAux);
+					if (isVariavel == false && isPalavraReservada == false && countAspas > 0) {
 						// verifica se a palavra e uma string	
 						isString = validaPalavraString(palavraAux, nuLinha);
 						
 						if (! isString) {
-							// error(nuLinha, 5, palavraAux);
+							printf("Entrou aqui");
+							error(nuLinha, 5, palavraAux);
 						}
 					}
+				}
+				
+				if (nuLinha == 10) {
+					// teste para debugar a linha
+					printf("[%d] - (%s) - [%d - %c] {%d} = %d \n", nuLinha, palavraAux, valorAscii, (char) valorAscii, countAspas, isString);
+				}
+				
+				// por causa que quando e encontrado 2 ou mais criterio de paradas seguidos ele estava comparando com a palavra vazia, e isso nao pode acontecer
+				if (strlen(palavraAux) > 0) {
+					// compara se é uma variavel e se é uma palavra reservada
+					if (isVariavel == false && isPalavraReservada == false && countAspas == 0) {
+						error(nuLinha, 5, palavraAux);
+					}
+				}
+				
+				// caso seja encontrada 2 aspas, e em seguida seja um caracter de parada tais como:
+				// virgula, ')', ';'
+				// deve ser zerado a contagem de 'countAspas'
+				if ((countAspas == 2) && ((valorAscii == 44) || (valorAscii == 41) || (valorAscii == 59))) {
+					countAspas = 0;
 				}
 				
 				limparLixoVetor(palavraAux);
@@ -156,6 +186,7 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 				isVariavel = 0;
 				isPalavraReservada = 0;
 				isString = 0;
+				isAspasValida = false;
 				
 				// como # faz parte da variavel e tambem é uma condição de parada, entao preciso incrementar aqui
 				if (valorAscii == 35) {
@@ -167,6 +198,11 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 		} // fim for que percorre as colunas da linha
 		
 		// -------------------------------------------------------------------------------
+		// verifica o duplo balanceamento de '"'
+		if (countAspas != 0) {
+			error(nuLinha, 22, conteudoLinha);
+		}
+
 		// Essa validação de ; no final esta invalida criar uma nova
 		isPossuiPontoVirgula = validaDeclaracaoComPontoVirgula(conteudoLinha, nuLinha);
 		
@@ -191,6 +227,8 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 		isLeia = false;
 		countVariaveis = 0;
 		countVirgulas = 0;
+		countAspas = 0;
+		isAspasValida = false;
     } // fim while que percorre as linhas
 }
 
@@ -229,7 +267,7 @@ int validarPalavraEscreva(char * palavra, int nuLinha, char * linha) {
 				palavraAux[count] = (char) valorAscii;
 				count++;
 				
-				if (strcmp(palavraAux, "escreva(#") == 0) {
+				if ((strcmp(palavraAux, "escreva(") == 0)) {
 					isEscrevaValido++;
 					break;
 				}
@@ -399,7 +437,6 @@ void verificarPresencaColchetes(char* palavra, char* tipoVariavel, int nuLinha) 
 			}
 		}
 	}
-	
 	
 	// TODO tratar quando for caractere
 	if (strcmp(tipoVariavel, tiposVariaveis[1]) == 0) {

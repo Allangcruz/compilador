@@ -36,10 +36,8 @@ int MAX_TOTAL_CONSUMO_MEMORIA = 367001600;
 void main ()
 {
 	setlocale(LC_ALL, "PORTUGUESE");
-    printf("\n================================================================\n");
-    printf("#= COMPILADOR, COMPILADORZINHO, COMPILADORZÃO, COMPILADORZAÇO =#\n");
     printf("================================================================\n");
-
+    printf("#= COMPILADOR, COMPILADORZINHO, COMPILADORZÃO, COMPILADORZAÇO =#\n");
 	printf("================================================================\n");
     printf("ALLAN GONÇALVE DA CRUZ - ELSON BENTO DOS SANTOS\n");
     printf("================================================================\n");
@@ -64,6 +62,6 @@ void main ()
     printf("\n\n");
     system("pause");
     
-    // 11111111111111
+    //1
 }
 

@@ -1,11 +1,4 @@
 programa
-inteiro #numero, #dinheiro;
-
-leia(#numero, #dinheiro);
-
-escreva(#numero);
-
+caractere #nome[2] = "Allan";
+escreva("");
 fim
-
-
-
