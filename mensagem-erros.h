@@ -91,6 +91,10 @@ void error(int nuLinha, int tipoErro, char *palavra) {
 			printf("19 - Erro => A declaração da palavra reservada 'leia' esta incorreta, (%s), favor verificar. [linha - %d].\n", palavra, nuLinha);
 		break;
 		
+		case 20:
+			printf("20 - Erro => As variavies devem ser separadas por ',' em (%s). [linha - %d].\n", palavra, nuLinha);
+		break;
+		
 		default:
 			printf("Foi selecionando um tipo de erro não definido no case.\n");
 		break;
@@ -130,7 +134,6 @@ void removerQuebraLinha(char* palavra) {
  * @param int situacao: 1 - incrementa, 2 - subtrai
  */
 void memoriaConsumida(int memoria, int situacao) {
-	char a[1] = "a";
 	if (situacao == 1) {
 		TOTAL_CONSUMO_MEMORIA = TOTAL_CONSUMO_MEMORIA + memoria;	
 	} else {
@@ -138,6 +141,7 @@ void memoriaConsumida(int memoria, int situacao) {
 	}
 	
 	if (TOTAL_CONSUMO_MEMORIA > MAX_TOTAL_CONSUMO_MEMORIA) {
+		char a[1] = "a";
 		error(0, 12, a);
 	}
 }

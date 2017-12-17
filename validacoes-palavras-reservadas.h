@@ -19,7 +19,7 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
     }
     
     Elem* no = *lista;
-    int i, valorAscii, nuLinha, count = 0;
+    int i, valorAscii, valorAsciiProximo, nuLinha, count = 0, countVariaveis = 0, countVirgulas = 0;
 
     char palavraAux[UCHAR_MAX],
 		 conteudoLinha[UCHAR_MAX], 
@@ -32,7 +32,7 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
     bool isVariavel = false,
 		 isPalavraReservada = false, 
 		 isCondicaoParada = false, 
-		 isLinhaComVariavel = false,
+		 isLinhaComVariavel = false, // verifica se a linha é uma declaração de variavel
 		 isString = false, 
 		 isPossuiPontoVirgula = false, 
 		 isLeia = false;
@@ -61,10 +61,16 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 				palavraAux[count] = (char) valorAscii;
 				count++;
 			} else {
+				
+				// conta a quantidade de ','
+				if (valorAscii == 44) {
+					countVirgulas ++;	
+				}
 										
 				isVariavel = validarDeclaracaoVariaveis(palavraAux, nuLinha);
 				
-				// verifica se não e uma variavel, se ele nao variavel, verificar se é palavra reservada
+				// verifica se não e uma variavel
+				// verificar se é palavra reservada
 				if (! isVariavel) {
 					isPalavraReservada = validarPalavrasReservadas(palavraAux);
 					
@@ -77,21 +83,9 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 							isLinhaComVariavel = true;
 						}
 						
-						// TODO caso seja leia
+						// caso seja leia
 						isLeia = validarPalavraLeia(palavraAux, nuLinha, conteudoLinha);
-						if (isLeia) {
-							//printf("entrou no if do leia.");						
-							// passa para proxima linha
-							// e resetar todas as variaveis e propriedade utilizadas em validacoes
-						}
-						
-						//printf("\n%d - %s", isLeia, palavraAux);
-						/*
-						if (isLinhaComVariavel == true && isLeia == true) {
-							error(nuLinha, 16, conteudoLinha);
-						}
-						*/
-						
+											
 						// TODO caso seja escreva
 						
 						// TODO caso seja se
@@ -102,6 +96,9 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 						
 					}
 				} else {
+					
+					countVariaveis ++;
+
 					if (isLinhaComVariavel == true && isLeia == false) {
 						// validar se a variavel ja foi declarada. 
 						if (validarVariavelDeclarada(palavraAux, tabelaSimbolos) == 1) {
@@ -132,9 +129,24 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 						error(nuLinha, 7, palavraAux);
 					}
 									
-					// TODO verifica se a variavel esta sendo redeclarada
-
 					// TODO Validar ponto e virgula no final da linha
+				}
+				
+				if (isVariavel == true || isLeia == true) {
+					//printf("(%d) - [%c] | [%d]\n", nuLinha, (char) valorAscii, valorAscii);
+
+					// valida variaveis separada por virgula
+					if (valorAscii == 32) {
+						// recupera o proximo valor
+						valorAsciiProximo = (int) conteudoLinha[i + 1]; 
+						printf("(%d) - (%d)\n", valorAsciiProximo, valorAscii);
+						
+						// apos uma variavel o proximo valor for outra variavel 
+						// que nao seja separada por ','
+						if (valorAsciiProximo == 35) {
+							//printf("[%d] - '%s' - %d - %d - %d\n", nuLinha, palavraAux, isLinhaComVariavel, isVariavel, valorAscii);
+						}
+					}
 				}
 				
 				// TODO verificar se a linha é uma declaracao de variavel e se o ultimo caracter é ;
@@ -177,6 +189,13 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 		if (isLinhaComVariavel == true && isPossuiPontoVirgula == false) {
 			error(nuLinha, 11, conteudoLinha);
 		}
+		
+		if (countVariaveis > 1) {
+			if (countVirgulas != (countVariaveis - 1)) {
+				error(nuLinha, 20, conteudoLinha);	
+			}
+		}
+		
 		// -------------------------------------------------------------------------------
 		// talvez criar uma funcao que sempre reset essa itens
 		no = no->prox;
@@ -184,6 +203,8 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 		limparLixoVetor(tipoVariavel);
 		isPossuiPontoVirgula = false;
 		isLeia = false;
+		countVariaveis = 0;
+		countVirgulas = 0;
     } // fim while que percorre as linhas
 }
 
