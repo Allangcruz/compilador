@@ -24,6 +24,7 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 		valorAscii, 
 		nuLinha, 
 		count = 0, 
+		countValor = 0,
 		countVariaveis = 0,
 		countVirgulas = 0, 
 		countAspas = 0;
@@ -33,9 +34,10 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 		 palavraAuxVariavel[UCHAR_MAX], 
 		 tipoVariavel[UCHAR_MAX], 
 		 tamanhoPalavra[UCHAR_MAX], 
-		 auxTamanhoPalavra[UCHAR_MAX];
+		 auxTamanhoPalavra[UCHAR_MAX],
+		 auxPalavraValor[UCHAR_MAX],
+		 auxNomeVariavel[UCHAR_MAX];
 		 
-
     bool isVariavel = false,
 		 isPalavraReservada = false, 
 		 isCondicaoParada = false, 
@@ -44,7 +46,8 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 		 isPossuiPontoVirgula = false, 
 		 isLeia = false,
 		 isEscreva = false,
-		 isAspasValida = false;
+		 isPossuiAspas = false,
+		 isAtribuicao = false;
     
 	limparLixoVetor(palavraAux);
     limparLixoVetor(tipoVariavel);
@@ -52,6 +55,8 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
     limparLixoVetor(tamanhoPalavra);
     limparLixoVetor(auxTamanhoPalavra);
     limparLixoVetor(palavraAuxVariavel);
+    limparLixoVetor(auxPalavraValor);
+    limparLixoVetor(auxNomeVariavel);
     
     while (no != NULL) {
 		strcpy(conteudoLinha, no->dados.conteudo);
@@ -68,21 +73,25 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 			// verifica se é '"'
 			if (valorAscii == 34) {
 				countAspas++;
+				isPossuiAspas = true;
 			}
-			
-			
-
-			
+					
 			// Verifica se a caracter ascii informado e uma condição de parada, para ser feita uma determinada analise.
-			// As condiçoes de parada sao os caracterers : \0, espaco, (, ), virgula, ponto virgula, #, tabs
-			if ((valorAscii != 10) && (valorAscii != 32) && (valorAscii != 40) && (valorAscii != 41) && (valorAscii != 44) && (valorAscii != 59) && (valorAscii != 35) && (valorAscii != 9)) {
-				palavraAux[count] = (char) valorAscii;
-				count++;
-			} else {
+			// As condiçoes de parada sao os caracterers : \0, espaco, (, ), virgula, ponto virgula, #, tabs, =
+			if ((valorAscii != 10) && (valorAscii != 32) && (valorAscii != 40) && (valorAscii != 41) && (valorAscii != 44) && (valorAscii != 59) && (valorAscii != 35) && (valorAscii != 9) && (valorAscii != 61)) {
+				if (isPossuiAspas == false) {
+					palavraAux[count] = (char) valorAscii;
+					count++;
+				}
+
+				atualizarValorVariavel(tabelaSimbolos, auxNomeVariavel, auxPalavraValor);		
+			} else if (isPossuiAspas == false) {
+				//printf("[%d][%d] - [%d][%c] - (%s) - (%s) - (%s)\n", nuLinha, i, valorAscii, (char) valorAscii, palavraAux, auxPalavraValor, auxNomeVariavel);
+				//printf("[%d][%d][%c][%s][%s] - (%d)(%d) \n", nuLinha, i, (char) valorAscii, palavraAux, auxPalavraValor, countVariaveis, countVirgulas);
 				
-				// conta a quantidade de ','
-				if (valorAscii == 44) {
-					countVirgulas ++;	
+				// verifica se é declaração de variavel e atribuição
+				if (isLinhaComVariavel == true && valorAscii == 61) {
+					isAtribuicao = true;
 				}
 										
 				isVariavel = validarDeclaracaoVariaveis(palavraAux, nuLinha);
@@ -137,6 +146,7 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 	    				
 						removeTamanhoVariavel(palavraAux);
 	    				strcpy(novoSimbolo.palavra, palavraAux);
+	    				strcpy(auxNomeVariavel, palavraAux);
 	    				strcpy(novoSimbolo.tipo, tipoVariavel);
 						
 						insereFinalTabelaSimbolo(tabelaSimbolos, novoSimbolo);
@@ -149,21 +159,16 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 					}
 				}
 				
+				// verifica se a string em '"' esta valida
 				if (strlen(palavraAux) > 0) {
 					if (isVariavel == false && isPalavraReservada == false && countAspas > 0) {
 						// verifica se a palavra e uma string	
 						isString = validaPalavraString(palavraAux, nuLinha);
 						
 						if (! isString) {
-							printf("Entrou aqui");
-							error(nuLinha, 5, palavraAux);
+							//error(nuLinha, 5, palavraAux);
 						}
 					}
-				}
-				
-				if (nuLinha == 10) {
-					// teste para debugar a linha
-					printf("[%d] - (%s) - [%d - %c] {%d} = %d \n", nuLinha, palavraAux, valorAscii, (char) valorAscii, countAspas, isString);
 				}
 				
 				// por causa que quando e encontrado 2 ou mais criterio de paradas seguidos ele estava comparando com a palavra vazia, e isso nao pode acontecer
@@ -174,19 +179,28 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 					}
 				}
 				
-				// caso seja encontrada 2 aspas, e em seguida seja um caracter de parada tais como:
-				// virgula, ')', ';'
-				// deve ser zerado a contagem de 'countAspas'
-				if ((countAspas == 2) && ((valorAscii == 44) || (valorAscii == 41) || (valorAscii == 59))) {
-					countAspas = 0;
-				}
-				
 				limparLixoVetor(palavraAux);
 				count=0;
 				isVariavel = 0;
 				isPalavraReservada = 0;
 				isString = 0;
-				isAspasValida = false;
+				
+				// como # faz parte da variavel e tambem é uma condição de parada, entao preciso incrementar aqui
+				if (valorAscii == 35) {
+					palavraAux[count] = (char) valorAscii;
+					count++;	
+				}
+			} // fim else valores que são condição de parada
+			
+			// condicão de parada quando para limpar a variavel 'auxPalavraValor'
+			// espaco, #, virgula, ponto e virgula
+			if ((countAspas == 2) && ((valorAscii == 32) || (valorAscii == 35) || (valorAscii == 44) || (valorAscii == 59))) {
+				atualizarValorVariavel(tabelaSimbolos, auxNomeVariavel, auxPalavraValor);
+				limparLixoVetor(auxPalavraValor);
+				limparLixoVetor(auxNomeVariavel);
+				countValor = 0;
+				isPossuiAspas = false;
+				//printf("zerou as varaiveis aqui\n");
 				
 				// como # faz parte da variavel e tambem é uma condição de parada, entao preciso incrementar aqui
 				if (valorAscii == 35) {
@@ -194,7 +208,24 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 					count++;	
 				}
 			}
+
+			// caso seja encontrada 2 aspas, e em seguida seja um caracter de parada tais como:
+			// virgula, ')', ';'
+			// deve ser zerado a contagem de 'countAspas'
+			if ((countAspas == 2) && ((valorAscii == 44) || (valorAscii == 41) || (valorAscii == 59))) {
+				countAspas = 0;
+			}
 			
+			if (isAtribuicao == true && countAspas > 0) {
+				auxPalavraValor[countValor] = (char) valorAscii;
+				countValor++;
+			}
+			
+			// conta a quantidade de ','
+			if (valorAscii == 44 && isPossuiAspas == false) {
+				countVirgulas ++;	
+			}
+
 		} // fim for que percorre as colunas da linha
 		
 		// -------------------------------------------------------------------------------
@@ -212,24 +243,46 @@ void analiseLexica(Lista* lista, TabelaSimbolo* tabelaSimbolos) {
 		}
 		
 		// caso tenha mais de 1 variavel a quantidade de virgulas serão 'countVirgulas' - 'countVariaveis' - 1)
-		if (countVariaveis > 1) {
+		if (countVariaveis > 1 && isEscreva == false) {
 			if (countVirgulas != (countVariaveis - 1)) {
 				error(nuLinha, 20, conteudoLinha);	
 			}
 		}
 		
-		// -------------------------------------------------------------------------------
 		// talvez criar uma funcao que sempre reset essa itens
 		no = no->prox;
 		isLinhaComVariavel = false;
 		limparLixoVetor(tipoVariavel);
+		limparLixoVetor(auxPalavraValor);
+		limparLixoVetor(auxNomeVariavel);
 		isPossuiPontoVirgula = false;
 		isLeia = false;
+		isEscreva = false;
 		countVariaveis = 0;
 		countVirgulas = 0;
 		countAspas = 0;
-		isAspasValida = false;
+		isPossuiAspas = false;
+		isAtribuicao = false;
+		countValor = 0;
     } // fim while que percorre as linhas
+}
+
+/**
+ * Atualiza o valor da variavel existente.
+ */
+void atualizarValorVariavel(TabelaSimbolo* lista, char * noVariavel, char * valor) {
+	if (lista == NULL) {
+        return;
+    }
+    
+	ElemSimbolo* no = *lista;
+	
+	while (no != NULL) {
+		if (strcmp(noVariavel, no->dados.palavra) == 0) {
+			strcpy(no->dados.valor, valor);
+		}
+		no = no->prox;
+    }
 }
 
 /**

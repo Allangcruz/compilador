@@ -1,4 +1,10 @@
 programa
-caractere #nome[2] = "Allan";
-escreva("");
+caractere #nome[2]="elson", #nome2[10]="Allan";
+inteiro #numero, #teste, #natalia;
+real #moeda[1.2];
+
+leia(#moeda, #moeda);
+
+escreva(#moeda, #natalia, "Allan");
+
 fim

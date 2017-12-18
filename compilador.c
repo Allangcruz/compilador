@@ -17,7 +17,7 @@ Elson Bento dos Santos
  */
 int TOTAL_CONSUMO_MEMORIA = 0;
 
-// 367001600 bytes => 350 megabytes | 
+// 367001600 bytes => 350 megabytes
 int MAX_TOTAL_CONSUMO_MEMORIA = 367001600;
 
 /**
@@ -61,7 +61,6 @@ void main ()
 	
     printf("\n\n");
     system("pause");
-    
-    //1
+    // 1
 }
 
